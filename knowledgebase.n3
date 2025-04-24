@@ -1,79 +1,270 @@
-@prefix ex: <http://example.org/> .
+@prefix ex: <http://example.org/building#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-# Base classes
+##################################
+### CLASSES
+##################################
 ex:Sector rdf:type rdfs:Class .
 ex:Device rdf:type rdfs:Class .
-ex:Sensor rdf:type rdfs:Device .
-ex:Conditioner rdf:type rdfs:Device .
-ex:Humidifier rdf:type rdfs:Device .
-ex:Dehumidifier rdf:type rdfs:Device .
-ex:Camera rdf:type rdfs:Device .
-ex:TemperatureSensor rdf:type rdfs:Sensor .
-ex:HumiditySensor rdf:type rdfs:Sensor .
-ex:ControlPanel rdf:type rdfs:Class .
+ex:Conditioner rdf:type rdfs:Class ;
+    rdfs:subClassOf ex:Device .
+ex:Humidifier rdf:type rdfs:Class ;
+    rdfs:subClassOf ex:Device .
+ex:Dehumidifier rdf:type rdfs:Class ;
+    rdfs:subClassOf ex:Device .
+ex:Camera rdf:type rdfs:Class ;
+    rdfs:subClassOf ex:Device .
 ex:Rule rdf:type rdfs:Class .
+ex:ConditioningRule rdfs:subClassOf ex:Rule .
+ex:HumidifyingRule rdfs:subClassOf ex:Rule .
+ex:DehumidifyingRule rdfs:subClassOf ex:Rule .
+ex:ModeRule rdfs:subClassOf ex:Rule .
+ex:FanSpeed rdf:type rdfs:Class .
+ex:ConditioningMode rdf:type rdfs:Class .
+ex:Season rdf:type rdfs:Class .
+ex:DensityCategory rdf:type rdfs:Class .
+ex:TemperatureCategory rdf:type rdfs:Class .
 
-# Properties
-ex:hasConditioner a rdf:Property ;
-    rdfs:range ex:Conditioner .
-ex:hasHumidifier a rdf:Property ;
-    rdfs:range ex:Humidifier .
-ex:hasDehumidifier a rdf:Property ;
-    rdfs:range ex:Dehumidifier .
-ex:hasCamera a rdf:Property ;
-    rdfs:range ex:Camera .
-ex:hasTemperatureSensor a rdf:Property ;
-    rdfs:range ex:TemperatureSensor .
-ex:hasHumiditySensor a rdf:Property ;
-    rdfs:range ex:HumiditySensor .
 
-# Instances
-ex:Sector1 rdf:type ex:Sector ;
-    ex:label "Sector 1" .
-ex:Sector2 rdf:type ex:Sector ;
-    ex:label "Sector 2" .
-ex:Conditioner1 rdf:type ex:Conditioner .
-ex:Conditioner2 rdf:type ex:Conditioner .
-ex:Conditioner3 rdf:type ex:Conditioner .
-ex:Humidifier1 rdf:type ex:Humidifier .
-ex:Humidifier2 rdf:type ex:Humidifier .
-ex:Humidifier3 rdf:type ex:Humidifier .
-ex:Dehumidifier1 rdf:type ex:Dehumidifier .
-ex:Dehumidifier2 rdf:type ex:Dehumidifier .
-ex:Dehumidifier3 rdf:type ex:Dehumidifier .
-ex:Camera1 rdf:type ex:Camera .
-ex:Camera2 rdf:type ex:Camera .
-ex:Camera3 rdf:type ex:Camera .
-ex:TemperatureSensor1 rdf:type ex:TemperatureSensor .
-ex:TemperatureSensor2 rdf:type ex:TemperatureSensor .
-ex:TemperatureSensor3 rdf:type ex:TemperatureSensor .
-ex:HumiditySensor1 rdf:type ex:HumiditySensor .
-ex:HumiditySensor2 rdf:type ex:HumiditySensor .
-ex:HumiditySensor3 rdf:type ex:HumiditySensor .
 
-# Relations
-ex:Sector1 ex:hasConditioner ex:Conditioner1 .
-ex:Sector1 ex:hasConditioner ex:Conditioner2 .
-ex:Sector1 ex:hasHumidifier ex:Humidifier1 .
-ex:Sector1 ex:hasHumidifier ex:Humidifier2 .
-ex:Sector1 ex:hasDehumidifier ex:Dehumidifier1 .
-ex:Sector1 ex:hasDehumidifier ex:Dehumidifier2 .
-ex:Sector1 ex:hasCamera ex:Camera1 .
-ex:Sector1 ex:hasCamera ex:Camera2 .
-ex:Sector1 ex:hasTemperatureSensor ex:TemperatureSensor1 .
-ex:Sector1 ex:hasTemperatureSensor ex:TemperatureSensor2 .
-ex:Sector1 ex:hasHumiditySensor ex:HumiditySensor1 .
-ex:Sector1 ex:hasHumiditySensor ex:HumiditySensor2 .
+##################################
+### SECTOR PROPERTIES
+##################################
+ex:hasTemperature rdf:type rdf:Property ;
+    rdfs:domain ex:Sector ;
+    rdfs:range xsd:float .
+ex:hasHumidity rdf:type rdf:Property ;
+    rdfs:domain ex:Sector ;
+    rdfs:range xsd:float .
+ex:hasPeopleCount rdf:type rdf:Property ;
+    rdfs:domain ex:Sector ;
+    rdfs:range xsd:integer .
+ex:hasSquare rdf:type rdf:Property ;
+    rdfs:domain ex:Sector ;
+    rdfs:range xsd:float .
 
-ex:Sector2 ex:hasConditioner ex:Conditioner3 .
-ex:Sector2 ex:hasHumidifier ex:Humidifier3 .
-ex:Sector2 ex:hasDehumidifier ex:Dehumidifier1 .
-ex:Sector2 ex:hasCamera ex:Camera3 .
-ex:Sector2 ex:hasTemperatureSensor ex:TemperatureSensor1 .
-ex:Sector2 ex:hasHumiditySensor ex:HumiditySensor3 .
 
-# Rules
-# ex:Rule1 rdf
+
+##################################
+### DEVICE PROPERTIES
+##################################
+ex:hasDevice rdf:type rdf:Property ;
+    rdfs:domain ex:Sector ;
+    rdfs:range ex:Device .
+ex:targetTemperature rdf:type rdf:Property ;
+    rdfs:domain ex:Conditioner ;
+    rdfs:range xsd:float .
+ex:targetHumidity rdf:type rdf:Property ;
+    rdfs:domain ex:Humidifier ;
+    rdfs:range xsd:float .
+ex:targetDryness rdf:type rdf:Property ;
+    rdfs:domain ex:Dehumidifier ;
+    rdfs:range xsd:float .
+
+
+
+##################################
+### FAN SPEEDS
+##################################
+ex:low rdf:type ex:FanSpeed ;
+    ex:label "low" .
+ex:medium rdf:type ex:FanSpeed ;
+    ex:label "medium" .
+ex:high rdf:type ex:FanSpeed ;
+    ex:label "high" .
+ex:auto rdf:type ex:FanSpeed ;
+    ex:label "auto" .
+
+
+
+##################################
+### CONDITIONING MODES
+##################################
+ex:heating rdf:type ex:ConditioningMode ;
+    ex:label "heating" .
+ex:cooling rdf:type ex:ConditioningMode ;
+    ex:label "cooling" .
+ex:auto rdf:type ex:ConditioningMode ;
+    ex:label "auto" .
+
+
+
+##################################
+### SEASONS MODES
+##################################
+ex:winter rdf:type ex:Season ;
+    ex:minTemperature "20.0"^^xsd:float ;
+    ex:maxTemperature "22.0"^^xsd:float .
+ex:summer rdf:type ex:Season ;
+    ex:minTemperature "23.0"^^xsd:float ;
+    ex:maxTemperature "25.0"^^xsd:float .
+ex:fall rdf:type ex:Season ;
+    ex:minTemperature "21.0"^^xsd:float ;
+    ex:maxTemperature "23.0"^^xsd:float .
+ex:spring rdf:type ex:Season ;
+    ex:minTemperature "21.0"^^xsd:float ;
+    ex:maxTemperature "23.0"^^xsd:float .
+
+
+
+##################################
+### DESTINY CATEGORIES
+##################################
+ex:lowDensity rdf:type ex:DensityCategory ;
+    ex:minDensity "0.0"^^xsd:float ;
+    ex:maxDensity "0.2"^^xsd:float .
+ex:mediumDensity rdf:type ex:DensityCategory ;
+    ex:minDensity "0.21"^^xsd:float ;
+    ex:maxDensity "0.5"^^xsd:float .
+ex:highDensity rdf:type ex:DensityCategory ;
+    ex:minDensity "0.51"^^xsd:float ;
+    ex:maxDensity "1000.0"^^xsd:float .
+
+
+
+##################################
+### TEMPERATURE CATEGORIES
+##################################
+ex:muchBelowNormal rdf:type ex:TemperatureCategory ;
+    ex:fromTemperatureDelta "1000.0"^^xsd:float ;
+    ex:toTemperatureDelta "2.1"^^xsd:float .
+ex:belowNormal rdf:type ex:TemperatureCategory ;
+    ex:fromTemperatureDelta "2.0"^^xsd:float ;
+    ex:toTemperatureDelta "0.1"^^xsd:float .
+ex:normal rdf:type ex:TemperatureCategory ;
+    ex:fromTemperatureDelta "0.0"^^xsd:float ;
+    ex:toTemperatureDelta "0.0"^^xsd:float .
+ex:aboveNormal rdf:type ex:TemperatureCategory ;
+    ex:fromTemperatureDelta "0.1"^^xsd:float ;
+    ex:toTemperatureDelta "2.0"^^xsd:float .
+ex:muchAboveNormal rdf:type ex:TemperatureCategory ;
+    ex:fromTemperatureDelta "2.1"^^xsd:float ;
+    ex:toTemperatureDelta "1000.0"^^xsd:float .
+
+
+
+##################################
+### HUMIDITY CATEGORIES
+##################################
+ex:muchBelowNormal rdf:type ex:HumidityCategory .
+ex:belowNormal rdf:type ex:HumidityCategory .
+ex:normal rdf:type ex:HumidityCategory .
+ex:aboveNormal rdf:type ex:HumidityCategory .
+ex:muchAboveNormal rdf:type ex:HumidityCategory .
+
+
+
+##################################
+### RULE PROPERTIES
+##################################
+ex:recommendedFanSpeed rdf:type rdf:Property ;
+    rdfs:domain ex:ConditioningRule ;
+    rdfs:range ex:FanSpeed .
+ex:recommendedConditioningMode rdf:type rdf:Property ;
+    rdfs:domain ex:ConditioningRule ;
+    rdfs:range ex:ConditioningMode .
+ex:densityCategory rdf:type rdf:Property ;
+    rdfs:domain ex:ConditioningRule ;
+    rdfs:range ex:DestinyCategory .
+ex:temperatureCategory rdf:type rdf:Property ;
+    rdfs:domain ex:ConditioningRule ;
+    rdfs:range ex:TemperatureCategory .
+
+ex:humidityLowThreshold rdf:type rdf:Property ;
+    rdfs:domain ex:HumidifyingRule ;
+    rdfs:range xsd:float .
+ex:humidityHighThreshold rdf:type rdf:Property ;
+    rdfs:domain ex:DehumidifyingRule ;
+    rdfs:range xsd:float .
+ex:targetHumidity rdf:type rdf:Property ;
+    rdfs:domain ex:HumidifyingRule ;
+    rdfs:range xsd:float .
+ex:targetDryness rdf:type rdf:Property ;
+    rdfs:domain ex:DehumidifyingRule ;
+    rdfs:range xsd:float .
+
+ex:activationDelta rdf:type rdf:Property ;
+    rdfs:domain ex:ModeRule ;
+    rdfs:range xsd:float ;
+    ex:value "0.5"^^xsd:float.
+
+
+
+##################################
+### CONDITIONING RULES
+##################################
+# Temperature is much below normal (an edge case)
+[] a ex:ConditioningRule ;
+    ex:label "The temperature is much below normal" ;
+    ex:temperatureCategory ex:muchBelowNormal ;
+    ex:recommendedFanSpeed ex:high ;
+    ex:recommendedConditioningMode ex:heating ;
+
+# Temperature is below normal
+[] a ex:ConditioningRule ;
+    ex:label "The temperature is below normal with low density" ;
+    ex:temperatureCategory ex:belowNormal ;
+    ex:recommendedFanSpeed ex:medium ;
+    ex:recommendedConditioningMode ex:heating ;
+    ex:densityCategory ex:lowDensity .
+[] a ex:ConditioningRule ;
+    ex:label "The temperature is below normal with medium density" ;
+    ex:temperatureCategory ex:belowNormal ;
+    ex:recommendedFanSpeed ex:auto ;
+    ex:recommendedConditioningMode ex:heating ;
+    ex:densityCategory ex:mediumDensity .
+[] a ex:ConditioningRule ;
+    ex:label "The temperature is below normal with high density" ;
+    ex:temperatureCategory ex:belowNormal ;
+    ex:recommendedFanSpeed ex:low ;
+    ex:recommendedConditioningMode ex:heating ;
+    ex:densityCategory ex:highDensity .
+
+# Temperature is normal
+[] a ex:ConditioningRule ;
+    ex:label "The temperature is normal with low density" ;
+    ex:temperatureCategory ex:normal ;
+    ex:recommendedFanSpeed ex:auto ;
+    ex:recommendedConditioningMode ex:auto ;
+    ex:densityCategory ex:lowDensity .
+[] a ex:ConditioningRule ;
+    ex:label "The temperature is normal with medium density" ;
+    ex:temperatureCategory ex:normal ;
+    ex:recommendedFanSpeed ex:auto ;
+    ex:recommendedConditioningMode ex:auto ;
+    ex:densityCategory ex:mediumDensity .
+[] a ex:ConditioningRule ;
+    ex:label "The temperature is normal with high density" ;
+    ex:temperatureCategory ex:normal ;
+    ex:recommendedFanSpeed ex:high ;
+    ex:recommendedConditioningMode ex:high ;
+    ex:densityCategory ex:highDensity .
+
+# Temperature is above normal
+[] a ex:ConditioningRule ;
+    ex:label "The temperature is above normal with low density" ;
+    ex:temperatureCategory ex:aboveNormal ;
+    ex:recommendedFanSpeed ex:medium ;
+    ex:recommendedConditioningMode ex:cooling ;
+    ex:densityCategory ex:lowDensity .
+[] a ex:ConditioningRule ;
+    ex:label "The temperature is above normal with medium density" ;
+    ex:temperatureCategory ex:aboveNormal ;
+    ex:recommendedFanSpeed ex:auto ;
+    ex:recommendedConditioningMode ex:cooling ;
+    ex:densityCategory ex:mediumDensity .
+[] a ex:ConditioningRule ;
+    ex:label "The temperature is above normal with high density" ;
+    ex:temperatureCategory ex:aboveNormal ;
+    ex:recommendedFanSpeed ex:high ;
+    ex:recommendedConditioningMode ex:cooling ;
+    ex:densityCategory ex:highDensity .
+
+# Temperature is much above normal (an edge case)
+[] a ex:ConditioningRule ;
+    ex:label "The temperature is much above normal" ;
+    ex:temperatureCategory ex:muchAboveNormal ;
+    ex:recommendedFanSpeed ex:high ;
+    ex:recommendedConditioningMode ex:cooling .
