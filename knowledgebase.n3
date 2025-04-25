@@ -356,7 +356,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
 ### DEHUMIDIFICATION RULES
 ##################################
 [] a ex:DehumidifyingRule ;
-    ex:label "The dehumidification is much below normal" ;
+    ex:label "The humidity is much below normal" ;
     ex:hasHumidityCategory ex:muchBelowNormal ;
     ex:hasPower ex:off .
 
