@@ -2,33 +2,97 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 
 ##################################
 ### CLASSES
 ##################################
-ex:Sector rdf:type rdfs:Class .
-ex:Device rdf:type rdfs:Class .
-ex:Conditioner rdf:type rdfs:Class ;
+ex:Sector rdf:type owl:Class .
+ex:Device rdf:type owl:Class .
+ex:Conditioner rdf:type owl:Class ;
     rdfs:subClassOf ex:Device .
-ex:Humidifier rdf:type rdfs:Class ;
+ex:Humidifier rdf:type owl:Class ;
     rdfs:subClassOf ex:Device .
-ex:Dehumidifier rdf:type rdfs:Class ;
+ex:Dehumidifier rdf:type owl:Class ;
     rdfs:subClassOf ex:Device .
-ex:Camera rdf:type rdfs:Class ;
-    rdfs:subClassOf ex:Device .
-ex:UseCase rdf:type rdfs:Class .
+ex:UseCase rdf:type owl:Class .
 ex:ConditioningUseCase rdfs:subClassOf ex:UseCase .
 ex:HumidifyingUseCase rdfs:subClassOf ex:UseCase .
 ex:DehumidifyingUseCase rdfs:subClassOf ex:UseCase .
-ex:FanSpeed rdf:type rdfs:Class .
-ex:ConditioningMode rdf:type rdfs:Class .
-ex:Season rdf:type rdfs:Class .
-ex:DensityCategory rdf:type rdfs:Class .
-ex:TemperatureCategory rdf:type rdfs:Class .
-ex:HumidityCategory rdf:type rdfs:Class .
-ex:HumidityMode rdf:type rdfs:Class .
-ex:Power rdf:type rdfs:Class .
-ex:DehumidificationMode rdf:type rdfs:Class .
+ex:FanSpeed rdf:type owl:Class .
+ex:ConditioningMode rdf:type owl:Class .
+ex:Season rdf:type owl:Class .
+ex:DensityCategory rdf:type owl:Class .
+ex:TemperatureCategory rdf:type owl:Class .
+ex:HumidityCategory rdf:type owl:Class .
+ex:HumidityMode rdf:type owl:Class .
+ex:Power rdf:type owl:Class .
+ex:DehumidificationMode rdf:type owl:Class .
+ex:Controller rdf:type owl:Class .
+
+
+
+##################################
+### PROPERTIES
+##################################
+ex:hasPower rdf:type rdf:Property ;
+    rdfs:domain ex:Device ;
+    rdfs:range ex:Power .
+ex:controls rdf:type owl:ObjectProperty ;
+    rdfs:domain ex:Controller ;
+    rdfs:range ex:Device .
+
+
+
+##################################
+### RESTRICTIONS
+##################################
+ex:Humidifier rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty ex:hasDehumidificationMode ;
+  owl:allValuesFrom owl:Nothing
+] .
+ex:Dehumidifier rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty ex:hasHumidityMode ;
+  owl:allValuesFrom owl:Nothing
+] .
+ex:DensityCategory rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty ex:hasMinDensity ;
+  owl:someValuesFrom xsd:float
+] , [
+  rdf:type owl:Restriction ;
+  owl:onProperty ex:hasMaxDensity ;
+  owl:someValuesFrom xsd:float
+] .
+ex:TemperatureCategory rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty ex:hasMinTemperature ;
+  owl:someValuesFrom xsd:float
+] , [
+  rdf:type owl:Restriction ;
+  owl:onProperty ex:hasMaxTemperature ;
+  owl:someValuesFrom xsd:float
+] .
+ex:HumidityCategory rdfs:subClassOf [
+  rdf:type owl:Restriction ;
+  owl:onProperty ex:hasMinHumidity ;
+  owl:someValuesFrom xsd:float
+] , [
+  rdf:type owl:Restriction ;
+  owl:onProperty ex:hasMaxHumidity ;
+  owl:someValuesFrom xsd:float
+] .
+ex:Controller rdfs:subClassOf [
+    rdf:type owl:Restriction ;
+    owl:onProperty ex:controls ;
+    owl:someValuesFrom ex:Device
+] , [
+    rdf:type owl:Restriction ;
+    owl:onProperty ex:controls ;
+    owl:someValuesFrom ex:Device
+] .
 
 
 
@@ -76,14 +140,14 @@ ex:spring rdf:type ex:Season ;
 ### DENSITY CATEGORIES
 ##################################
 ex:lowDensity rdf:type ex:DensityCategory ;
-    ex:minDensity "0.0"^^xsd:float ;
-    ex:maxDensity "0.2"^^xsd:float .
+    ex:hasMinDensity "0.0"^^xsd:float ;
+    ex:hasMaxDensity "0.2"^^xsd:float .
 ex:mediumDensity rdf:type ex:DensityCategory ;
-    ex:minDensity "0.21"^^xsd:float ;
-    ex:maxDensity "0.5"^^xsd:float .
+    ex:hasMinDensity "0.21"^^xsd:float ;
+    ex:hasMaxDensity "0.5"^^xsd:float .
 ex:highDensity rdf:type ex:DensityCategory ;
-    ex:minDensity "0.51"^^xsd:float ;
-    ex:maxDensity "1000.0"^^xsd:float .
+    ex:hasMinDensity "0.51"^^xsd:float ;
+    ex:hasMaxDensity "1000.0"^^xsd:float .
 
 
 
@@ -91,20 +155,20 @@ ex:highDensity rdf:type ex:DensityCategory ;
 ### TEMPERATURE CATEGORIES
 ##################################
 ex:muchBelowNormal rdf:type ex:TemperatureCategory ;
-    ex:from "-1000.0"^^xsd:float ;
-    ex:to "-3.1"^^xsd:float .
+    ex:hasMinTemperature "-1000.0"^^xsd:float ;
+    ex:hasMaxTemperature "-3.1"^^xsd:float .
 ex:belowNormal rdf:type ex:TemperatureCategory ;
-    ex:from "-3.0"^^xsd:float ;
-    ex:to "-1.1"^^xsd:float .
+    ex:hasMinTemperature "-3.0"^^xsd:float ;
+    ex:hasMaxTemperature "-1.1"^^xsd:float .
 ex:normal rdf:type ex:TemperatureCategory ;
-    ex:from "-1.0"^^xsd:float ;
-    ex:to "1.0"^^xsd:float .
+    ex:hasMinTemperature "-1.0"^^xsd:float ;
+    ex:hasMaxTemperature "1.0"^^xsd:float .
 ex:aboveNormal rdf:type ex:TemperatureCategory ;
-    ex:from "1.1"^^xsd:float ;
-    ex:to "3.0"^^xsd:float .
+    ex:hasMinTemperature "1.1"^^xsd:float ;
+    ex:hasMaxTemperature "3.0"^^xsd:float .
 ex:muchAboveNormal rdf:type ex:TemperatureCategory ;
-    ex:from "3.1"^^xsd:float ;
-    ex:to "1000.0"^^xsd:float .
+    ex:hasMinTemperature "3.1"^^xsd:float ;
+    ex:hasMaxTemperature "1000.0"^^xsd:float .
 
 
 
@@ -112,20 +176,20 @@ ex:muchAboveNormal rdf:type ex:TemperatureCategory ;
 ### HUMIDITY CATEGORIES
 ##################################
 ex:muchBelowNormal rdf:type ex:HumidityCategory ;
-    ex:from "0.0"^^xsd:float ;
-    ex:to "29.9"^^xsd:float .
+    ex:hasMinHumidity "0.0"^^xsd:float ;
+    ex:hasMaxHumidity "29.9"^^xsd:float .
 ex:belowNormal rdf:type ex:HumidityCategory ;
-    ex:from "30.0"^^xsd:float ;
-    ex:to "39.9"^^xsd:float .
+    ex:hasMinHumidity "30.0"^^xsd:float ;
+    ex:hasMaxHumidity "39.9"^^xsd:float .
 ex:normal rdf:type ex:HumidityCategory ;
-    ex:from "40.0"^^xsd:float ;
-    ex:to "60.0"^^xsd:float .
+    ex:hasMinHumidity "40.0"^^xsd:float ;
+    ex:hasMaxHumidity "60.0"^^xsd:float .
 ex:aboveNormal rdf:type ex:HumidityCategory ;
-    ex:from "60.1"^^xsd:float ;
-    ex:to "70.0"^^xsd:float .
+    ex:hasMinHumidity "60.1"^^xsd:float ;
+    ex:hasMaxHumidity "70.0"^^xsd:float .
 ex:muchAboveNormal rdf:type ex:HumidityCategory ;
-    ex:from "70.1"^^xsd:float ;
-    ex:to "100"^^xsd:float .
+    ex:hasMinHumidity "70.1"^^xsd:float ;
+    ex:hasMaxHumidity "100"^^xsd:float .
 
 
 
@@ -184,9 +248,6 @@ ex:hasHumidityMode rdf:type rdf:Property ;
 ex:hasHumidifyingFanSpeed rdf:type rdf:Property ;
     rdfs:domain ex:HumidifyingUseCase ;
     rdfs:range ex:FanSpeed .
-ex:hasPower rdf:type rdf:Property ;
-    rdfs:domain ex:HumidifyingUseCase ;
-    rdfs:range ex:Power .
 
 ex:hasDehumidificationMode rdf:type rdf:Property ;
     rdfs:domain ex:DehumidifyingUseCase ;
@@ -194,9 +255,6 @@ ex:hasDehumidificationMode rdf:type rdf:Property ;
 ex:hasDehumidificationFanSpeed rdf:type rdf:Property ;
     rdfs:domain ex:DehumidifyingUseCase ;
     rdfs:range ex:FanSpeed .
-ex:hasPower rdf:type rdf:Property ;
-    rdfs:domain ex:DehumidifyingUseCase ;
-    rdfs:range ex:Power .
 ex:hasHumidityMode rdf:type rdf:Property ;
     rdfs:domain ex:DehumidifyingUseCase ;
     rdfs:range ex:HumidityMode .
@@ -289,29 +347,47 @@ ex:hasHumidityMode rdf:type rdf:Property ;
     ex:label "The humidity is much below normal" ;
     ex:hasHumidityCategory ex:muchBelowNormal ;
     ex:hasHumidifyingFanSpeed ex:high ;
-    ex:hasHumidityMode ex:turbo .
+    ex:hasHumidityMode ex:turbo ;
+    ex:controls [
+        a ex:Humidifier ;
+        ex:hasPower ex:on
+    ] .
 
 [] a ex:HumidifyingUseCase ;
     ex:label "The humidity is below normal" ;
     ex:hasHumidityCategory ex:belowNormal ;
     ex:hasHumidifyingFanSpeed ex:medium ;
-    ex:hasHumidityMode ex:turbo .
+    ex:hasHumidityMode ex:turbo ;
+    ex:controls [
+        a ex:Humidifier ;
+        ex:hasPower ex:on
+    ] .
 
 [] a ex:HumidifyingUseCase ;
     ex:label "The humidity is normal" ;
     ex:hasHumidityCategory ex:normal ;
     ex:hasHumidifyingFanSpeed ex:auto ;
-    ex:hasHumidityMode ex:auto .
+    ex:hasHumidityMode ex:auto ;
+    ex:controls [
+        a ex:Humidifier ;
+        ex:hasPower ex:on
+    ] .
 
 [] a ex:HumidifyingUseCase ;
     ex:label "The humidity is above normal" ;
     ex:hasHumidityCategory ex:aboveNormal ;
-    ex:hasPower ex:off .
+    ex:controls [
+        a ex:Humidifier ;
+        ex:hasPower ex:off
+    ] .
 
 [] a ex:HumidifyingUseCase ;
     ex:label "The humidity is much above normal" ;
     ex:hasHumidityCategory ex:muchAboveNormal ;
-    ex:hasPower ex:off .
+    ex:controls [
+        a ex:Humidifier ;
+        ex:hasPower ex:off
+    ] .
 
 
 
@@ -321,26 +397,43 @@ ex:hasHumidityMode rdf:type rdf:Property ;
 [] a ex:DehumidifyingUseCase ;
     ex:label "The humidity is much below normal" ;
     ex:hasHumidityCategory ex:muchBelowNormal ;
-    ex:hasPower ex:off .
+    ex:controls [
+        a ex:Dehumidifier ;
+        ex:hasPower ex:off
+    ] .
 
 [] a ex:DehumidifyingUseCase ;
     ex:label "The humidity is below normal" ;
     ex:hasHumidityCategory ex:belowNormal ;
-    ex:hasPower ex:off .
+    ex:controls [
+        a ex:Dehumidifier ;
+        ex:hasPower ex:off
+    ] .
 
 [] a ex:DehumidifyingUseCase ;
     ex:label "The humidity is normal" ;
     ex:hasHumidityCategory ex:normal ;
-    ex:hasPower ex:off .
+    ex:controls [
+        a ex:Dehumidifier ;
+        ex:hasPower ex:off
+    ] .
 
 [] a ex:DehumidifyingUseCase ;
     ex:label "The humidity is above normal" ;
     ex:hasHumidityCategory ex:aboveNormal ;
     ex:hasDehumidificationFanSpeed ex:medium ;
-    ex:hasDehumidificationMode ex:auto .
+    ex:hasDehumidificationMode ex:auto ;
+    ex:controls [
+        a ex:Dehumidifier ;
+        ex:hasPower ex:on
+    ] .
 
 [] a ex:DehumidifyingUseCase ;
     ex:label "The humidity is much above normal" ;
     ex:hasHumidityCategory ex:muchAboveNormal ;
     ex:hasDehumidificationFanSpeed ex:medium ;
-    ex:hasDehumidificationMode ex:drying .
+    ex:hasDehumidificationMode ex:drying ;
+    ex:controls [
+        a ex:Dehumidifier ;
+        ex:hasPower ex:on
+    ] .
