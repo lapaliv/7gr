@@ -93,6 +93,10 @@ ex:Controller rdfs:subClassOf [
     owl:onProperty ex:controls ;
     owl:someValuesFrom ex:Device
 ] .
+ex:Device rdfs:subClassOf [
+    owl:onProperty ex:hasPower ;
+    owl:someValuesFrom ex:Power
+].
 
 
 
@@ -269,7 +273,11 @@ ex:hasHumidityMode rdf:type rdf:Property ;
     ex:label "The temperature is much below normal" ;
     ex:hasTemperatureCategory ex:muchBelowNormal ;
     ex:hasConditioningFanSpeed ex:high ;
-    ex:hasConditioningMode ex:heating .
+    ex:hasConditioningMode ex:heating ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
 
 # Temperature is below normal
 [] a ex:ConditioningUseCase ;
@@ -277,19 +285,31 @@ ex:hasHumidityMode rdf:type rdf:Property ;
     ex:hasTemperatureCategory ex:belowNormal ;
     ex:hasConditioningFanSpeed ex:medium ;
     ex:hasConditioningMode ex:heating ;
-    ex:hasDensityCategory ex:lowDensity .
+    ex:hasDensityCategory ex:lowDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
 [] a ex:ConditioningUseCase ;
     ex:label "The temperature is below normal with medium density" ;
     ex:hasTemperatureCategory ex:belowNormal ;
     ex:hasConditioningFanSpeed ex:auto ;
     ex:hasConditioningMode ex:heating ;
-    ex:hasDensityCategory ex:mediumDensity .
+    ex:hasDensityCategory ex:mediumDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
 [] a ex:ConditioningUseCase ;
     ex:label "The temperature is below normal with high density" ;
     ex:hasTemperatureCategory ex:belowNormal ;
     ex:hasConditioningFanSpeed ex:low ;
     ex:hasConditioningMode ex:heating ;
-    ex:hasDensityCategory ex:highDensity .
+    ex:hasDensityCategory ex:highDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
 
 # Temperature is normal
 [] a ex:ConditioningUseCase ;
@@ -297,19 +317,31 @@ ex:hasHumidityMode rdf:type rdf:Property ;
     ex:hasTemperatureCategory ex:normal ;
     ex:hasConditioningFanSpeed ex:auto ;
     ex:hasConditioningMode ex:auto ;
-    ex:hasDensityCategory ex:lowDensity .
+    ex:hasDensityCategory ex:lowDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
 [] a ex:ConditioningUseCase ;
     ex:label "The temperature is normal with medium density" ;
     ex:hasTemperatureCategory ex:normal ;
     ex:hasConditioningFanSpeed ex:auto ;
     ex:hasConditioningMode ex:auto ;
-    ex:hasDensityCategory ex:mediumDensity .
+    ex:hasDensityCategory ex:mediumDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
 [] a ex:ConditioningUseCase ;
     ex:label "The temperature is normal with high density" ;
     ex:hasTemperatureCategory ex:normal ;
     ex:hasConditioningFanSpeed ex:high ;
     ex:hasConditioningMode ex:high ;
-    ex:hasDensityCategory ex:highDensity .
+    ex:hasDensityCategory ex:highDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
 
 # Temperature is above normal
 [] a ex:ConditioningUseCase ;
@@ -317,26 +349,42 @@ ex:hasHumidityMode rdf:type rdf:Property ;
     ex:hasTemperatureCategory ex:aboveNormal ;
     ex:hasConditioningFanSpeed ex:medium ;
     ex:hasConditioningMode ex:cooling ;
-    ex:hasDensityCategory ex:lowDensity .
+    ex:hasDensityCategory ex:lowDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
 [] a ex:ConditioningUseCase ;
     ex:label "The temperature is above normal with medium density" ;
     ex:hasTemperatureCategory ex:aboveNormal ;
     ex:hasConditioningFanSpeed ex:auto ;
     ex:hasConditioningMode ex:cooling ;
-    ex:hasDensityCategory ex:mediumDensity .
+    ex:hasDensityCategory ex:mediumDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
 [] a ex:ConditioningUseCase ;
     ex:label "The temperature is above normal with high density" ;
     ex:hasTemperatureCategory ex:aboveNormal ;
     ex:hasConditioningFanSpeed ex:high ;
     ex:hasConditioningMode ex:cooling ;
-    ex:hasDensityCategory ex:highDensity .
+    ex:hasDensityCategory ex:highDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
 
 # Temperature is much above normal (an edge case)
 [] a ex:ConditioningUseCase ;
     ex:label "The temperature is much above normal" ;
     ex:hasTemperatureCategory ex:muchAboveNormal ;
     ex:hasConditioningFanSpeed ex:high ;
-    ex:hasConditioningMode ex:cooling .
+    ex:hasConditioningMode ex:cooling ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
 
 
 
