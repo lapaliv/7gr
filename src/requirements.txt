@@ -1,0 +1,7 @@
+python_dotenv
+Django==5.2.1
+psycopg2
+dependency-injector
+Pillow
+requests
+rdflib

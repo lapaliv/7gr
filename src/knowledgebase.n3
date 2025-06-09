@@ -127,16 +127,28 @@ ex:auto rdf:type ex:ConditioningMode ;
 
 
 ##################################
-### SEASONS MODES
+### SEASONS TARGETS
 ##################################
 ex:winter rdf:type ex:Season ;
-    ex:target "21"^^xsd:float .
+    ex:hasMinTemperature "20"^^xsd:float ;
+    ex:hasMaxTemperature "22"^^xsd:float ;
+    ex:hasMinHumidity "30.0"^^xsd:float ;
+    ex:hasMaxHumidity "45.0"^^xsd:float .
 ex:summer rdf:type ex:Season ;
-    ex:target "24"^^xsd:float .
+    ex:hasMinTemperature "23"^^xsd:float ;
+    ex:hasMaxTemperature "26"^^xsd:float ;
+    ex:hasMinHumidity "40.0"^^xsd:float ;
+    ex:hasMaxHumidity "60.0"^^xsd:float .
 ex:fall rdf:type ex:Season ;
-    ex:target "22"^^xsd:float .
+    ex:hasMinTemperature "20"^^xsd:float ;
+    ex:hasMaxTemperature "23"^^xsd:float ;
+    ex:hasMinHumidity "40.0"^^xsd:float ;
+    ex:hasMaxHumidity "55.0"^^xsd:float .
 ex:spring rdf:type ex:Season ;
-    ex:target "22"^^xsd:float .
+    ex:hasMinTemperature "20"^^xsd:float ;
+    ex:hasMaxTemperature "23"^^xsd:float ;
+    ex:hasMinHumidity "40.0"^^xsd:float ;
+    ex:hasMaxHumidity "55.0"^^xsd:float .
 
 
 
@@ -145,10 +157,10 @@ ex:spring rdf:type ex:Season ;
 ##################################
 ex:lowDensity rdf:type ex:DensityCategory ;
     ex:hasMinDensity "0.0"^^xsd:float ;
-    ex:hasMaxDensity "0.2"^^xsd:float .
+    ex:hasMaxDensity "0.21"^^xsd:float .
 ex:mediumDensity rdf:type ex:DensityCategory ;
     ex:hasMinDensity "0.21"^^xsd:float ;
-    ex:hasMaxDensity "0.5"^^xsd:float .
+    ex:hasMaxDensity "0.51"^^xsd:float .
 ex:highDensity rdf:type ex:DensityCategory ;
     ex:hasMinDensity "0.51"^^xsd:float ;
     ex:hasMaxDensity "1000.0"^^xsd:float .
@@ -180,20 +192,20 @@ ex:muchAboveNormal rdf:type ex:TemperatureCategory ;
 ### HUMIDITY CATEGORIES
 ##################################
 ex:muchBelowNormal rdf:type ex:HumidityCategory ;
-    ex:hasMinHumidity "0.0"^^xsd:float ;
-    ex:hasMaxHumidity "29.9"^^xsd:float .
+    ex:hasMinHumidity "-1000.0"^^xsd:float ;
+    ex:hasMaxHumidity "-3.1"^^xsd:float .
 ex:belowNormal rdf:type ex:HumidityCategory ;
-    ex:hasMinHumidity "30.0"^^xsd:float ;
-    ex:hasMaxHumidity "39.9"^^xsd:float .
+    ex:hasMinHumidity "-3.0"^^xsd:float ;
+    ex:hasMaxHumidity "-0.1"^^xsd:float .
 ex:normal rdf:type ex:HumidityCategory ;
-    ex:hasMinHumidity "40.0"^^xsd:float ;
-    ex:hasMaxHumidity "60.0"^^xsd:float .
+    ex:hasMinHumidity "0.0"^^xsd:float ;
+    ex:hasMaxHumidity "0.0"^^xsd:float .
 ex:aboveNormal rdf:type ex:HumidityCategory ;
-    ex:hasMinHumidity "60.1"^^xsd:float ;
-    ex:hasMaxHumidity "70.0"^^xsd:float .
+    ex:hasMinHumidity "0.1"^^xsd:float ;
+    ex:hasMaxHumidity "3.0"^^xsd:float .
 ex:muchAboveNormal rdf:type ex:HumidityCategory ;
-    ex:hasMinHumidity "70.1"^^xsd:float ;
-    ex:hasMaxHumidity "100"^^xsd:float .
+    ex:hasMinHumidity "3.1"^^xsd:float ;
+    ex:hasMaxHumidity "1000.0"^^xsd:float .
 
 
 
@@ -336,7 +348,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
     ex:label "The temperature is normal with high density" ;
     ex:hasTemperatureCategory ex:normal ;
     ex:hasConditioningFanSpeed ex:high ;
-    ex:hasConditioningMode ex:high ;
+    ex:hasConditioningMode ex:auto ;
     ex:hasDensityCategory ex:highDensity ;
     ex:controls [
         a ex:Conditioner ;
