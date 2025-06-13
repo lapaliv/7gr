@@ -1,13 +1,33 @@
 # Installation the server
 
+Run all commands inside the `src` directory.
+
 ```shell
-cd src
-python -m venv venv
-pip install -r requirements.txt
+python -m venv src/venv
+source src/venv/bin/activate
+pip install -r src/requirements.txt
+```
+
+# Set up the server
+```shell
+cp src/.env.example src/.env
+```
+
+Then modify it.
+
+```shell
+python src/manage.py migrate
+python src/manage.py createsuperuser
 ```
 
 # Get started the server
 
+Cron:
 ```shell
-python manage.py manage_sectors
+python src/manage.py manage_sectors
+```
+
+Running the server:
+```shell
+python src/manage.py runserver
 ```

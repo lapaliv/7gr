@@ -1,19 +1,24 @@
 from enum import Enum
 
-class ConditioningMode(Enum):
+class BaseStrEnum(str):
+    @classmethod
+    def choices(cls):
+        return [(key.value, key.name.replace('_', ' ').title()) for key in cls]
+
+class ConditioningMode(BaseStrEnum, Enum):
     HEATING = 'heating'
     COOLING = 'cooling'
     AUTO = 'auto'
 
-class HumidityMode(Enum):
+class HumidityMode(BaseStrEnum, Enum):
     TURBO = 'turbo'
     AUTO = 'auto'
 
-class DehumidificationMode(Enum):
+class DehumidificationMode(BaseStrEnum, Enum):
     TURBO = 'turbo'
     AUTO = 'auto'
 
-class DeviceType(Enum):
+class DeviceType(BaseStrEnum, Enum):
     CONDITIONER = 'conditioner'
     CAMERA = 'camera'
     HUMIDIFIER = 'humidifier'
@@ -21,18 +26,18 @@ class DeviceType(Enum):
     TEMPERATURE_SENSOR = 'temperature_sensor'
     HUMIDITY_SENSOR = 'humidity_sensor'
 
-class Season(Enum):
+class Season(BaseStrEnum, Enum):
     WINTER = 'winter'
     SPRING = 'spring'
     SUMMER = 'summer'
     FALL = 'fall'
 
-class FanSpeed(Enum):
+class FanSpeed(BaseStrEnum, Enum):
     LOW = 'low'
     MEDIUM = 'medium'
     HIGH = 'high'
     AUTO = 'auto'
 
-class DevicePower(Enum):
+class DevicePower(BaseStrEnum, Enum):
     OFF = 'off'
     ON = 'on'

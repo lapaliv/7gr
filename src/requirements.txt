@@ -5,3 +5,4 @@ dependency-injector
 Pillow
 requests
 rdflib
+typing_extensions

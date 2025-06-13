@@ -40,9 +40,13 @@ class Migration(migrations.Migration):
                 ("host", models.CharField(max_length=15)),
                 ("port", models.IntegerField()),
                 ("is_automatic", models.BooleanField(default=True)),
-                ("target_temperature", models.FloatField(null = True, default=None)),
-                ("target_humidity", models.FloatField(null = True, default=None)),
+                ("current_temperature", models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)),
+                ("target_temperature", models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)),
+                ("current_humidity", models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)),
+                ("target_humidity", models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)),
+                ("current_fan_speed", models.CharField(null = True, max_length=10)),
                 ("target_fan_speed", models.CharField(null = True, max_length=10)),
+                ("current_mode", models.CharField(null = True, max_length=10)),
                 ("target_mode", models.CharField(null = True, max_length=10)),
                 ("power", models.CharField(null = False, max_length=3, default = 'on')),
                 (
@@ -51,6 +55,10 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.CASCADE, to="climate.sector"
                     ),
                 ),
+                ("error", models.TextField(null = True)),
             ],
+            options={
+                "unique_together": {("host", "port")},
+            },
         ),
     ]

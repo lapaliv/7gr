@@ -128,7 +128,6 @@ class DummyConditioner(Conditioner):
         return self.temperature
 
     def set_temperature(self, temperature: float):
-        print("Conditioner temperature changed from", self.temperature, "to", temperature)
         self.temperature = temperature
 
     def get_fan_speed(self) -> enums.FanSpeed:
@@ -136,7 +135,6 @@ class DummyConditioner(Conditioner):
 
     def set_fan_speed(self, fan_speed: enums.FanSpeed):
         if self.fan_speed != fan_speed:
-            print("Conditioner fan speed changed from", self.fan_speed, "to", fan_speed)
             self.fan_speed = fan_speed
 
     def get_mode(self) -> enums.ConditioningMode:
@@ -144,7 +142,6 @@ class DummyConditioner(Conditioner):
 
     def set_mode(self, mode: enums.ConditioningMode):
         if self.mode != mode:
-            print("Conditioner mode changed from", self.mode, "to", mode)
             self.mode = mode
 
     def get_power(self) -> enums.DevicePower:
@@ -152,7 +149,6 @@ class DummyConditioner(Conditioner):
 
     def set_power(self, power: enums.DevicePower):
         if self.power != power:
-            print("Conditioner power changed from", self.power, "to", power)
             self.power = power
 
 class DummyCamera(Camera):
@@ -187,7 +183,6 @@ class DummyHumidifier(Humidifier):
 
     def set_humidity(self, humidity: float):
         if self.humidity != humidity:
-            print("Humidifier humidity changed from", self.humidity, "to", humidity)
             self.humidity = humidity
 
     def get_fan_speed(self) -> enums.FanSpeed:
@@ -195,7 +190,6 @@ class DummyHumidifier(Humidifier):
 
     def set_fan_speed(self, fan_speed: enums.FanSpeed):
         if self.fan_speed != fan_speed:
-            print("Humidifier fan speed changed from", self.fan_speed, "to", fan_speed)
             self.fan_speed = fan_speed
 
     def get_mode(self) -> enums.HumidityMode:
@@ -203,7 +197,6 @@ class DummyHumidifier(Humidifier):
 
     def set_mode(self, mode: enums.HumidityMode):
         if self.mode != mode:
-            print("Humidifier mode changed from", self.mode, "to", mode)
             self.mode = mode
 
     def get_power(self) -> enums.DevicePower:
@@ -211,7 +204,6 @@ class DummyHumidifier(Humidifier):
 
     def set_power(self, power: enums.DevicePower):
         if self.power != power:
-            print("Humidifier power changed from", self.power, "to", power)
             self.power = power
 
 class DummyHumiditySensor(HumiditySensor):
@@ -233,7 +225,6 @@ class DummyDehumidifier(Dehumidifier):
 
     def set_humidity(self, humidity: float):
         if self.humidity != humidity:
-            print("Dehumidifier humidity changed from", self.humidity, "to", humidity)
             self.humidity = humidity
 
     def get_fan_speed(self) -> enums.FanSpeed:
@@ -241,7 +232,6 @@ class DummyDehumidifier(Dehumidifier):
 
     def set_fan_speed(self, fan_speed: enums.FanSpeed):
         if self.fan_speed != fan_speed:
-            print("Dehumidifier fan speed changed from", self.fan_speed, "to", fan_speed)
             self.fan_speed = fan_speed
 
     def get_mode(self) -> enums.HumidityMode:
@@ -249,7 +239,6 @@ class DummyDehumidifier(Dehumidifier):
 
     def set_mode(self, mode: enums.HumidityMode):
         if self.mode != mode:
-            print("Dehumidifier mode changed from", self.mode, "to", mode)
             self.mode = mode
 
     def get_power(self) -> enums.DevicePower:
@@ -257,5 +246,4 @@ class DummyDehumidifier(Dehumidifier):
 
     def set_power(self, power: enums.DevicePower):
         if self.power != power:
-            print("Dehumidifier power changed from", self.power, "to", power)
             self.power = power
