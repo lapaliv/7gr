@@ -17,8 +17,10 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
+from climate.admin_views import digital_twin
 
 urlpatterns = [
     path("climate/", include("climate.urls")),
+    path("admin/digital-twin/", digital_twin, name="digital_twin"),
     path("admin/", admin.site.urls),
 ]

@@ -1,0 +1,120 @@
+{% extends "admin/base_site.html" %}
+{% load custom_filters %}
+{% block content %}
+
+<table class="adminlist" style="width: 100%;">
+    <thead>
+    <tr>
+        <th rowspan="2">Sector</th>
+        <th colspan="11">Device</th>
+    </tr>
+    <tr>
+        <th>Host</th>
+        <th>Port</th>
+        <th>Type</th>
+        <th>Power</th>
+        <th>Managing</th>
+        <th>Temperature</th>
+        <th>Humidity</th>
+        <th>Fan speed</th>
+        <th>Mode</th>
+        <th>Error</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for sector in sectors %}
+    {% with sector.id as sector_id %}
+    {% with grouped_devices|get_item:sector_id as devices %}
+        {% if devices %}
+            {% for device in devices %}
+                <tr>
+                    {% if forloop.first %}
+                        <td rowspan="{{ devices|length }}">{{ sector.name }}</td>
+                    {% endif %}
+                    <td>{{ device.host }}</td>
+                    <td>{{ device.port }}</td>
+                    <td>{{ device.type }}</td>
+                    <td>
+                        {% if device.power == 'on' %}
+                        <span style="color: green;">ON</span>
+                        {% else %}
+                        <span style="color: red; font-weight: bold;">OFF</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if device.power == 'on' %}
+                            {% if device.is_automatic %}
+                                <span style="color: gray;">Auto</span>
+                            {% else %}
+                                <span style="color: orange;">Manual</span>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if device.power == 'on' and device.current_temperature != None %}
+                            {{ device.current_temperature }}
+
+                            {% if device.current_temperature != device.target_temperature and device.target_temperature != None %}
+                                -> {{ device.target_temperature }}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if device.power == 'on' and device.current_humidity != None %}
+                            {{ device.current_humidity }}
+
+                            {% if device.current_humidity != device.target_humidity and device.target_humidity != None %}
+                                -> {{ device.target_humidity }}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if device.power == 'on' and device.current_fan_speed != None %}
+                            {{ device.current_fan_speed }}
+
+                            {% if device.current_fan_speed != device.target_fan_speed and device.target_fan_speed != None %}
+                                -> {{ device.target_fan_speed }}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if device.power == 'on' and device.current_mode != None %}
+                            {{ device.current_mode }}
+
+                            {% if device.current_mode != device.target_mode and device.targetd_mode != None %}
+                                -> {{ device.target_mode }}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if device.power == 'on' and device.error != None %}
+                            {{ device.error }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/admin/climate/device/{{ device.id }}/change/" class="changelink" aria-describedby="climate-device">Change</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    {% endwith %}
+    {% endfor %}
+    </tbody>
+</table>
+
+<div class="paginator" style="margin-top: 20px;">
+    {% if page > 1 %}
+    <a href="?page={{ page|add:-1 }}&limit={{ limit }}">← Prev</a>
+    {% endif %}
+
+    <span>Page {{ page }} of {{ total_pages }}</span>
+
+    {% if page < total_pages %}
+    <a href="?page={{ page|add:1 }}&limit={{ limit }}">Next →</a>
+    {% endif %}
+</div>
+
+{% endblock %}

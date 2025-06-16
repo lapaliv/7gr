@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Admin panel — Climate manager{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">Climate manager</a></h1>
+{% endblock %}
+
+{% block nav-global %}
+<div style="padding: 10px;">
+    <a href="{% url 'digital_twin' %}">🌀 Digital twin</a>
+</div>
+{% endblock %}
