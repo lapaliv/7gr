@@ -270,8 +270,11 @@ class SeasonRepository(KnowledgeRepository):
             return Season.FALL
 
 class SectorRepository:
-    def get_all(self):
-        return Sector.objects.order_by("id")
+    def get_all(self, offset: int = 0, limit: int = 100):
+        return Sector.objects.order_by("id")[offset:offset + limit]
+
+    def count(self):
+        return Sector.objects.count()
 
 
 class DeviceRepository:

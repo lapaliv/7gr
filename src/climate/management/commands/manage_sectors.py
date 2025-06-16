@@ -31,47 +31,54 @@ class Command(BaseCommand):
         self.get_average_destiny_from_cameras_feature = Container.get_average_destiny_from_cameras_feature()
 
     def handle(self, *args, **kwargs):
-        sectors = self.sector_repository.get_all()
-        season = self.season_repository.get_current_season()
+        sectors_offset = 0
+        sectors_limit = 100
 
-        for sector in sectors:
-            print("-" * 10, 'SECTOR:', sector.name, '-' * 10)
-            devices = self.device_repository.get_for_sector(sector)
-            devices_grouped_by_type = {}
+        while True:
+            sectors = self.sector_repository.get_all(offset = offset, limit = limit)
+            season = self.season_repository.get_current_season()
 
-            for device in devices:
-                if device.type not in devices_grouped_by_type:
-                    devices_grouped_by_type[device.type] = []
+            for sector in sectors:
+                print("-" * 10, 'SECTOR:', sector.name, '-' * 10)
+                devices = self.device_repository.get_for_sector(sector)
+                devices_grouped_by_type = {}
 
-                devices_grouped_by_type[device.type].append(device)
+                for device in devices:
+                    if device.type not in devices_grouped_by_type:
+                        devices_grouped_by_type[device.type] = []
 
-            cameras = devices_grouped_by_type[DeviceType.CAMERA.value] if DeviceType.CAMERA.value in devices_grouped_by_type else []
+                    devices_grouped_by_type[device.type].append(device)
 
-            print("-" * 3, 'State', '-' * 3)
+                cameras = devices_grouped_by_type[DeviceType.CAMERA.value] if DeviceType.CAMERA.value in devices_grouped_by_type else []
 
-            destiny = None
-            if cameras:
-                destiny = self.get_average_destiny_from_cameras_feature.handle(cameras)
+                print("-" * 3, 'State', '-' * 3)
 
-            if destiny is None:
-                destiny = self.DEFAULT_DESTINY
+                destiny = None
+                if cameras:
+                    destiny = self.get_average_destiny_from_cameras_feature.handle(cameras)
 
-            print('Average destiny:', f'{destiny} pers/m²')
+                if destiny is None:
+                    destiny = self.DEFAULT_DESTINY
 
-            current_temperature = self._get_current_temperature(devices_grouped_by_type)
-            print('Average temperature:', 'None' if current_temperature is None else f'{current_temperature} °C')
+                print('Average destiny:', f'{destiny} pers/m²')
 
-            current_humidity = self._get_current_humidity(devices_grouped_by_type)
-            print('Average humidity:', 'None' if current_humidity is None else f'{current_humidity}%')
+                current_temperature = self._get_current_temperature(devices_grouped_by_type)
+                print('Average temperature:', 'None' if current_temperature is None else f'{current_temperature} °C')
 
-            if current_temperature or current_humidity:
-                print("-" * 3, 'Updates', '-' * 3)
+                current_humidity = self._get_current_humidity(devices_grouped_by_type)
+                print('Average humidity:', 'None' if current_humidity is None else f'{current_humidity}%')
 
-            if current_temperature:
-                self._manage_temperature(devices_grouped_by_type, season, destiny, current_temperature)
+                if current_temperature or current_humidity:
+                    print("-" * 3, 'Updates', '-' * 3)
 
-            if current_humidity:
-                self._manage_humidity(devices_grouped_by_type, season, current_humidity)
+                if current_temperature:
+                    self._manage_temperature(devices_grouped_by_type, season, destiny, current_temperature)
+
+                if current_humidity:
+                    self._manage_humidity(devices_grouped_by_type, season, current_humidity)
+
+            if len(sectors) < limit:
+                break
 
     def _get_current_temperature(self, devices_grouped_by_type) -> float | None:
         temperature_sensors = devices_grouped_by_type[DeviceType.TEMPERATURE_SENSOR.value] if DeviceType.TEMPERATURE_SENSOR.value in devices_grouped_by_type else []

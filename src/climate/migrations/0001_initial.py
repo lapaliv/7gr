@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
                 ("error", models.TextField(null = True)),
             ],
             options={
-                "unique_together": {("host", "port")},
+                "unique_together": {("sector", "host", "port")},
             },
         ),
     ]
