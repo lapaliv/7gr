@@ -1,5 +1,4 @@
 from dependency_injector import containers, providers
-from . import storages
 from climate.storages import N3KnowledgeStorage
 from climate.repositories import (
     UseCaseRepository,
@@ -18,16 +17,12 @@ from climate.managers import (
     TemperatureSensorDeviceManager,
     HumiditySensorDeviceManager,
 )
-from climate.features import (
-    GetAverageDestinyFromCamerasFeature
-)
 from climate.wrappers import ComputerVision, DummyComputerVision
 from pathlib import Path
 
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(modules=[
         "climate.management.commands.manage_sectors",
-        "climate.controllers",
         "climate.features",
         "climate.repositories",
         "climate.storages",
@@ -39,7 +34,7 @@ class Container(containers.DeclarativeContainer):
     # Storages
     n3_knowledge_path = base_path / 'knowledgebase.n3'
     n3_knowledge_storage = providers.Singleton(N3KnowledgeStorage, n3_knowledge_path.resolve())
-    knowledge_storage = providers.Delegate(n3_knowledge_storage)
+    knowledge_storage = n3_knowledge_storage
 
     # Repositories
     season_repository = providers.Singleton(SeasonRepository,storage=knowledge_storage())
@@ -66,7 +61,4 @@ class Container(containers.DeclarativeContainer):
 
     # Device drivers
     dummy_computer_vision = providers.Singleton(DummyComputerVision, 30.0)
-    computer_vision = providers.Delegate(dummy_computer_vision)
-
-    # Features
-    get_average_destiny_from_cameras_feature = providers.Singleton(GetAverageDestinyFromCamerasFeature, camera_device_manager = camera_device_manager(), computer_vision = computer_vision())
+    computer_vision = dummy_computer_vision

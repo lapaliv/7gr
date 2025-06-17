@@ -14,6 +14,7 @@
         <th>Type</th>
         <th>Power</th>
         <th>Managing</th>
+        <th>Destiny</th>
         <th>Temperature</th>
         <th>Humidity</th>
         <th>Fan speed</th>
@@ -49,6 +50,15 @@
                                 <span style="color: gray;">Auto</span>
                             {% else %}
                                 <span style="color: orange;">Manual</span>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if device.power == 'on' and device.current_destiny != None %}
+                            {{ device.current_destiny }}
+
+                            {% if device.current_destiny != device.target_destiny and device.target_destiny != None %}
+                                -> {{ device.target_destiny }}
                             {% endif %}
                         {% endif %}
                     </td>

@@ -10,10 +10,9 @@ from climate.repositories import (
     UseCaseRepository,
     SeasonRepository
 )
+import traceback
 
 class Command(BaseCommand):
-    DEFAULT_DESTINY = 50.0
-
     def __init__(self):
         super().__init__()
 
@@ -27,15 +26,16 @@ class Command(BaseCommand):
         self.humidity_sensor_device_manager = Container.humidity_sensor_device_manager()
         self.humidifier_device_manager = Container.humidifier_device_manager()
         self.dehumidifier_device_manager = Container.dehumidifier_device_manager()
+        self.camera_device_manager = Container.camera_device_manager()
 
-        self.get_average_destiny_from_cameras_feature = Container.get_average_destiny_from_cameras_feature()
+        self.computer_vision = Container.computer_vision()
 
     def handle(self, *args, **kwargs):
         sectors_offset = 0
         sectors_limit = 100
 
         while True:
-            sectors = self.sector_repository.get_all(offset = offset, limit = limit)
+            sectors = self.sector_repository.get_all(sectors_offset, sectors_limit)
             season = self.season_repository.get_current_season()
 
             for sector in sectors:
@@ -49,17 +49,9 @@ class Command(BaseCommand):
 
                     devices_grouped_by_type[device.type].append(device)
 
-                cameras = devices_grouped_by_type[DeviceType.CAMERA.value] if DeviceType.CAMERA.value in devices_grouped_by_type else []
-
                 print("-" * 3, 'State', '-' * 3)
 
-                destiny = None
-                if cameras:
-                    destiny = self.get_average_destiny_from_cameras_feature.handle(cameras)
-
-                if destiny is None:
-                    destiny = self.DEFAULT_DESTINY
-
+                destiny = self.__get_average_destiny(devices_grouped_by_type)
                 print('Average destiny:', f'{destiny} pers/m²')
 
                 current_temperature = self._get_current_temperature(devices_grouped_by_type)
@@ -77,8 +69,27 @@ class Command(BaseCommand):
                 if current_humidity:
                     self._manage_humidity(devices_grouped_by_type, season, current_humidity)
 
-            if len(sectors) < limit:
+            if len(sectors) < sectors_limit:
                 break
+
+    def __get_average_destiny(self, devices_grouped_by_type) -> float:
+        cameras = devices_grouped_by_type[DeviceType.CAMERA.value] if DeviceType.CAMERA.value in devices_grouped_by_type else []
+        values = []
+
+        for camera in cameras:
+            driver = self.camera_device_manager.get_driver(camera)
+            photo = driver.get_photo()
+            destiny = self.computer_vision.get_number_of_people(photo)
+
+            camera.current_destiny = destiny
+            camera.save()
+
+            values.append(destiny)
+
+        if values:
+            return statistics.mean(values)
+
+        return 50.0 # default value
 
     def _get_current_temperature(self, devices_grouped_by_type) -> float | None:
         temperature_sensors = devices_grouped_by_type[DeviceType.TEMPERATURE_SENSOR.value] if DeviceType.TEMPERATURE_SENSOR.value in devices_grouped_by_type else []
@@ -163,7 +174,7 @@ class Command(BaseCommand):
 
                         if driver.get_mode() != target_mode:
                             print(f'Conditioner #{conditioner.id} mode:', driver.get_fan_speed(), '->', target_mode.value)
-                            driver.set_mode(mode)
+                            driver.set_mode(target_mode)
 
                         conditioner.power = DevicePower.ON.value
                         conditioner.target_temperature = target_temperature
