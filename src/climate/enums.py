@@ -25,6 +25,7 @@ class DeviceType(BaseStrEnum, Enum):
     DEHUMIDIFIER = 'dehumidifier'
     TEMPERATURE_SENSOR = 'temperature_sensor'
     HUMIDITY_SENSOR = 'humidity_sensor'
+    FAN = 'fan'
 
 class Season(BaseStrEnum, Enum):
     WINTER = 'winter'

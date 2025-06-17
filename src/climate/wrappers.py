@@ -165,11 +165,11 @@ class ComputerVision:
         pass
 
 class DummyComputerVision(ComputerVision):
-    def __init__(self, destiny: float):
-        self.destiny = destiny
+    def __init__(self, density: float):
+        self.density = density
 
     def get_number_of_people(self, image: Image.Image) -> float:
-        return self.destiny
+        return self.density
 
 class DummyHumidifier(Humidifier):
     def __init__(self, humidity: float, fan_speed: enums.FanSpeed, mode: enums.HumidityMode, power: enums.DevicePower):
@@ -240,6 +240,42 @@ class DummyDehumidifier(Dehumidifier):
     def set_mode(self, mode: enums.HumidityMode):
         if self.mode != mode:
             self.mode = mode
+
+    def get_power(self) -> enums.DevicePower:
+        return self.power
+
+    def set_power(self, power: enums.DevicePower):
+        if self.power != power:
+            self.power = power
+
+class Fan(ABC):
+    @abstractmethod
+    def get_speed(self) -> enums.FanSpeed:
+        pass
+
+    @abstractmethod
+    def set_speed(self, fan_speed: enums.FanSpeed):
+        pass
+
+    @abstractmethod
+    def get_power(self) -> enums.DevicePower:
+        pass
+
+    @abstractmethod
+    def set_power(self, power: enums.DevicePower):
+        pass
+
+class DummyFan(Fan):
+    def __init__(self, speed: enums.FanSpeed, power: enums.DevicePower):
+        self.speed = speed
+        self.power = power
+
+    def get_speed(self) -> enums.FanSpeed:
+        return self.speed
+
+    def set_speed(self, speed: enums.FanSpeed):
+        if self.speed != speed:
+            self.speed = speed
 
     def get_power(self) -> enums.DevicePower:
         return self.power

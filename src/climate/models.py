@@ -21,7 +21,7 @@ class Device(models.Model):
     host = models.CharField(max_length = 15)
     port = models.IntegerField()
     is_automatic = models.BooleanField(default=True)
-    current_destiny = models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)
+    current_density = models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)
     current_temperature = models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)
     target_temperature = models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)
     current_humidity = models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)
@@ -63,9 +63,9 @@ class Device(models.Model):
     error = models.TextField(null = True, default = None)
 
     def clean(self):
-        conflict_qs = Device.objects.exclude(pk=self.pk).filter(host=self.host, port=self.port)
+        conflict_qs = Device.objects.exclude(pk=self.pk).filter(sector=self.sector, host=self.host, port=self.port)
         if conflict_qs.exists():
-            raise ValidationError({'host': f'Device with host {self.host} and port {self.port} already exists.'})
+            raise ValidationError({'host': f'Device with host {self.host} and port {self.port} in the sector already exists.'})
 
     def __str__(self):
         return f'{self.host}:{self.port} ({self.type})'

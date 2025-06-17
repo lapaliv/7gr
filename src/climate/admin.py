@@ -5,7 +5,7 @@ from climate.enums import DeviceType
 admin.site.register(Sector)
 
 class DeviceAdmin(admin.ModelAdmin):
-    exclude = ['current_temperature', 'current_humidity', 'current_fan_speed', 'current_mode', 'error']
+    exclude = ['current_density', 'current_temperature', 'current_humidity', 'current_fan_speed', 'current_mode', 'error']
 
     def get_readonly_fields(self, request, obj=None):
         readonly = []
@@ -15,6 +15,9 @@ class DeviceAdmin(admin.ModelAdmin):
             readonly.append('target_humidity')
             readonly.append('target_fan_speed')
             readonly.append('target_mode')
+
+        if obj != None and (obj.type == DeviceType.TEMPERATURE_SENSOR.value or obj.type == DeviceType.HUMIDITY_SENSOR.value):
+            readonly.append('is_automatic')
 
         if obj is None or obj.is_automatic:
             readonly.append('power')

@@ -16,6 +16,7 @@ from climate.managers import (
     DehumidifierDeviceManager,
     TemperatureSensorDeviceManager,
     HumiditySensorDeviceManager,
+    FanDeviceManager,
 )
 from climate.wrappers import ComputerVision, DummyComputerVision
 from pathlib import Path
@@ -58,6 +59,7 @@ class Container(containers.DeclarativeContainer):
     dehumidifier_device_manager = providers.Singleton(DehumidifierDeviceManager)
     temperature_sensor_device_manager = providers.Singleton(TemperatureSensorDeviceManager)
     humidity_sensor_device_manager = providers.Singleton(HumiditySensorDeviceManager)
+    fan_device_manager = providers.Singleton(FanDeviceManager)
 
     # Device drivers
     dummy_computer_vision = providers.Singleton(DummyComputerVision, 30.0)

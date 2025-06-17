@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 import statistics
+import math
 
 from climate.container import Container
 from climate.enums import Season
@@ -10,7 +11,6 @@ from climate.repositories import (
     UseCaseRepository,
     SeasonRepository
 )
-import traceback
 
 class Command(BaseCommand):
     def __init__(self):
@@ -27,6 +27,7 @@ class Command(BaseCommand):
         self.humidifier_device_manager = Container.humidifier_device_manager()
         self.dehumidifier_device_manager = Container.dehumidifier_device_manager()
         self.camera_device_manager = Container.camera_device_manager()
+        self.fan_device_manager = Container.fan_device_manager()
 
         self.computer_vision = Container.computer_vision()
 
@@ -51,8 +52,8 @@ class Command(BaseCommand):
 
                 print("-" * 3, 'State', '-' * 3)
 
-                destiny = self.__get_average_destiny(devices_grouped_by_type)
-                print('Average destiny:', f'{destiny} pers/m²')
+                density = self.__get_average_density(devices_grouped_by_type)
+                print('Average density:', f'{density} pers/m²')
 
                 current_temperature = self._get_current_temperature(devices_grouped_by_type)
                 print('Average temperature:', 'None' if current_temperature is None else f'{current_temperature} °C')
@@ -63,8 +64,10 @@ class Command(BaseCommand):
                 if current_temperature or current_humidity:
                     print("-" * 3, 'Updates', '-' * 3)
 
+                self._manage_fan(devices_grouped_by_type, density)
+
                 if current_temperature:
-                    self._manage_temperature(devices_grouped_by_type, season, destiny, current_temperature)
+                    self._manage_temperature(devices_grouped_by_type, season, density, current_temperature)
 
                 if current_humidity:
                     self._manage_humidity(devices_grouped_by_type, season, current_humidity)
@@ -72,24 +75,23 @@ class Command(BaseCommand):
             if len(sectors) < sectors_limit:
                 break
 
-    def __get_average_destiny(self, devices_grouped_by_type) -> float:
+    def __get_average_density(self, devices_grouped_by_type) -> float:
         cameras = devices_grouped_by_type[DeviceType.CAMERA.value] if DeviceType.CAMERA.value in devices_grouped_by_type else []
         values = []
 
         for camera in cameras:
             driver = self.camera_device_manager.get_driver(camera)
             photo = driver.get_photo()
-            destiny = self.computer_vision.get_number_of_people(photo)
+            density = self.computer_vision.get_number_of_people(photo)
 
-            camera.current_destiny = destiny
+            camera.current_density = density
             camera.save()
 
-            values.append(destiny)
+            values.append(density)
 
-        if values:
-            return statistics.mean(values)
+        result = statistics.mean(values) if values else 50.0
 
-        return 50.0 # default value
+        return math.floor(result * 100) / 100
 
     def _get_current_temperature(self, devices_grouped_by_type) -> float | None:
         temperature_sensors = devices_grouped_by_type[DeviceType.TEMPERATURE_SENSOR.value] if DeviceType.TEMPERATURE_SENSOR.value in devices_grouped_by_type else []
@@ -135,9 +137,11 @@ class Command(BaseCommand):
         if not temperature_values:
             return
 
-        return statistics.mean(temperature_values) if temperature_values else 0.0
+        result = statistics.mean(temperature_values) if temperature_values else 0.0
 
-    def _manage_temperature(self, devices_grouped_by_type, season: Season, destiny: float, current_temperature: float):
+        return math.floor(result * 100) / 100
+
+    def _manage_temperature(self, devices_grouped_by_type, season: Season, density: float, current_temperature: float):
         temperature_sensors = devices_grouped_by_type[DeviceType.TEMPERATURE_SENSOR.value] if DeviceType.TEMPERATURE_SENSOR.value in devices_grouped_by_type else []
         conditioners = devices_grouped_by_type[DeviceType.CONDITIONER.value] if DeviceType.CONDITIONER.value in devices_grouped_by_type else []
 
@@ -146,7 +150,7 @@ class Command(BaseCommand):
 
         (min_target, max_target) = self.season_repository.get_temperature_span(season)
         target_temperature = (min_target + max_target) / 2
-        use_cases = self.use_case_repository.get_by_temperature(current_temperature, min_target, max_target, destiny)
+        use_cases = self.use_case_repository.get_conditioning_use_cases(current_temperature, min_target, max_target, density)
 
         for use_case in use_cases:
             (target_fan_speed, target_mode, target_device_power) = use_case
@@ -173,7 +177,7 @@ class Command(BaseCommand):
                             driver.set_fan_speed(target_fan_speed)
 
                         if driver.get_mode() != target_mode:
-                            print(f'Conditioner #{conditioner.id} mode:', driver.get_fan_speed(), '->', target_mode.value)
+                            print(f'Conditioner #{conditioner.id} mode:', driver.get_mode(), '->', target_mode.value)
                             driver.set_mode(target_mode)
 
                         conditioner.power = DevicePower.ON.value
@@ -190,6 +194,47 @@ class Command(BaseCommand):
                     conditioner.error = str(e)
                 finally:
                     conditioner.save()
+
+    def _manage_fan(self, devices_grouped_by_type, density: float):
+        fans = devices_grouped_by_type[DeviceType.FAN.value] if DeviceType.FAN.value in devices_grouped_by_type else []
+
+        if not fans:
+            return
+
+        use_cases = self.use_case_repository.get_fan_use_case_by_destiny(density)
+
+        for use_case in use_cases:
+            (target_speed, target_device_power) = use_case
+
+            for fan in fans:
+                if not fan.is_automatic:
+                    continue
+
+                driver = self.fan_device_manager.get_driver(fan)
+
+                try:
+                    if driver.get_power() != target_device_power:
+                        print(f'Fan #{fan.id} power:', DevicePower(driver.get_power()), '->', target_device_power.value)
+
+                    driver.set_power(target_device_power)
+
+                    if target_device_power == DevicePower.ON:
+                        if driver.get_speed() != target_speed:
+                            print(f'Fan #{fan.id} speed:', driver.get_speed(), '->', target_speed.value)
+                            driver.set_speed(target_speed)
+
+                        fan.power = DevicePower.ON.value
+                        fan.current_fan_speed = driver.get_speed()
+                        fan.target_fan_speed = target_speed.value
+                    else:
+                        fan.power = DevicePower.OFF.value
+                        fan.current_fan_speed = None
+                        fan.target_fan_speed = None
+                    fan.error = None
+                except Exception as e:
+                    fan.error = str(e)
+                finally:
+                    fan.save()
 
     def _get_current_humidity(self, devices_grouped_by_type) -> float | None:
         humidity_sensors = devices_grouped_by_type[DeviceType.HUMIDITY_SENSOR.value] if DeviceType.HUMIDITY_SENSOR.value in devices_grouped_by_type else []
@@ -228,14 +273,16 @@ class Command(BaseCommand):
             dehumidifier.current_mode = driver.get_mode()
             dehumidifier.save()
 
-        return statistics.mean(humidity_values) if humidity_values else None
+        result = statistics.mean(humidity_values) if humidity_values else None
+
+        return None if result == None else (math.floor(result * 100) / 100)
 
     def _manage_humidity(self, devices_grouped_by_type, season: Season, current_humidity: float):
         humidifiers = devices_grouped_by_type[DeviceType.HUMIDIFIER.value] if DeviceType.HUMIDIFIER.value in devices_grouped_by_type else []
         dehumidifiers = devices_grouped_by_type[DeviceType.DEHUMIDIFIER.value] if DeviceType.DEHUMIDIFIER.value in devices_grouped_by_type else []
 
         (min_target, max_target) = self.season_repository.get_humidity_span(season)
-        use_cases = self.use_case_repository.get_by_humidity(current_humidity, min_target, max_target)
+        use_cases = self.use_case_repository.get_humidity_use_cases(current_humidity, min_target, max_target)
         target_humidity = (min_target + max_target) / 2
 
         for use_case in use_cases:

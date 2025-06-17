@@ -4,9 +4,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 
-##################################
 ### CLASSES
-##################################
 ex:Sector rdf:type owl:Class .
 ex:Device rdf:type owl:Class .
 ex:Conditioner rdf:type owl:Class ;
@@ -15,10 +13,13 @@ ex:Humidifier rdf:type owl:Class ;
     rdfs:subClassOf ex:Device .
 ex:Dehumidifier rdf:type owl:Class ;
     rdfs:subClassOf ex:Device .
+ex:Fan rdf:type owl:Class ;
+    rdfs:subClassOf ex:Device .
 ex:UseCase rdf:type owl:Class .
 ex:ConditioningUseCase rdfs:subClassOf ex:UseCase .
 ex:HumidifyingUseCase rdfs:subClassOf ex:UseCase .
 ex:DehumidifyingUseCase rdfs:subClassOf ex:UseCase .
+ex:FanUseCase rdfs:subClassOf ex:UseCase .
 ex:FanSpeed rdf:type owl:Class .
 ex:ConditioningMode rdf:type owl:Class .
 ex:Season rdf:type owl:Class .
@@ -32,21 +33,20 @@ ex:Controller rdf:type owl:Class .
 
 
 
-##################################
 ### PROPERTIES
-##################################
 ex:hasPower rdf:type rdf:Property ;
     rdfs:domain ex:Device ;
     rdfs:range ex:Power .
 ex:controls rdf:type owl:ObjectProperty ;
     rdfs:domain ex:Controller ;
     rdfs:range ex:Device .
+ex:label rdf:type rdf:Property ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:string .
 
 
 
-##################################
 ### RESTRICTIONS
-##################################
 ex:Humidifier rdfs:subClassOf [
   rdf:type owl:Restriction ;
   owl:onProperty ex:hasDehumidificationMode ;
@@ -88,21 +88,16 @@ ex:Controller rdfs:subClassOf [
     rdf:type owl:Restriction ;
     owl:onProperty ex:controls ;
     owl:someValuesFrom ex:Device
-] , [
-    rdf:type owl:Restriction ;
-    owl:onProperty ex:controls ;
-    owl:someValuesFrom ex:Device
 ] .
 ex:Device rdfs:subClassOf [
+    rdf:type owl:Restriction ;
     owl:onProperty ex:hasPower ;
     owl:someValuesFrom ex:Power
-].
+] .
 
 
 
-##################################
 ### FAN SPEEDS
-##################################
 ex:low rdf:type ex:FanSpeed ;
     ex:label "low" .
 ex:medium rdf:type ex:FanSpeed ;
@@ -114,9 +109,7 @@ ex:auto rdf:type ex:FanSpeed ;
 
 
 
-##################################
 ### CONDITIONING MODES
-##################################
 ex:heating rdf:type ex:ConditioningMode ;
     ex:label "heating" .
 ex:cooling rdf:type ex:ConditioningMode ;
@@ -126,9 +119,7 @@ ex:auto rdf:type ex:ConditioningMode ;
 
 
 
-##################################
 ### SEASONS TARGETS
-##################################
 ex:winter rdf:type ex:Season ;
     ex:hasMinTemperature "20"^^xsd:float ;
     ex:hasMaxTemperature "22"^^xsd:float ;
@@ -152,24 +143,26 @@ ex:spring rdf:type ex:Season ;
 
 
 
-##################################
 ### DENSITY CATEGORIES
-##################################
-ex:lowDensity rdf:type ex:DensityCategory ;
+ex:zeroDensity rdf:type ex:DensityCategory ;
     ex:hasMinDensity "0.0"^^xsd:float ;
+    ex:hasMaxDensity "0.01"^^xsd:float .
+ex:lowDensity rdf:type ex:DensityCategory ;
+    ex:hasMinDensity "0.01"^^xsd:float ;
     ex:hasMaxDensity "0.21"^^xsd:float .
 ex:mediumDensity rdf:type ex:DensityCategory ;
     ex:hasMinDensity "0.21"^^xsd:float ;
     ex:hasMaxDensity "0.51"^^xsd:float .
 ex:highDensity rdf:type ex:DensityCategory ;
     ex:hasMinDensity "0.51"^^xsd:float ;
+    ex:hasMaxDensity "0.7"^^xsd:float .
+ex:extraHighDensity rdf:type ex:DensityCategory ;
+    ex:hasMinDensity "0.71"^^xsd:float ;
     ex:hasMaxDensity "1000.0"^^xsd:float .
 
 
 
-##################################
 ### TEMPERATURE CATEGORIES
-##################################
 ex:muchBelowNormal rdf:type ex:TemperatureCategory ;
     ex:hasMinTemperature "-1000.0"^^xsd:float ;
     ex:hasMaxTemperature "-3.1"^^xsd:float .
@@ -188,9 +181,7 @@ ex:muchAboveNormal rdf:type ex:TemperatureCategory ;
 
 
 
-##################################
 ### HUMIDITY CATEGORIES
-##################################
 ex:muchBelowNormal rdf:type ex:HumidityCategory ;
     ex:hasMinHumidity "-1000.0"^^xsd:float ;
     ex:hasMaxHumidity "-3.1"^^xsd:float .
@@ -209,9 +200,7 @@ ex:muchAboveNormal rdf:type ex:HumidityCategory ;
 
 
 
-##################################
 ### HUMIDITY MODES
-##################################
 ex:turbo rdf:type ex:HumidityMode ;
     ex:label "Turbo" .
 ex:auto rdf:type ex:HumidityMode ;
@@ -219,9 +208,7 @@ ex:auto rdf:type ex:HumidityMode ;
 
 
 
-##################################
 ### POWERS
-##################################
 ex:off rdf:type ex:Power ;
     ex:label "Turned off" .
 ex:on rdf:type ex:Power ;
@@ -229,9 +216,7 @@ ex:on rdf:type ex:Power ;
 
 
 
-##################################
 ### DEHUMIDIFICATION MODES
-##################################
 ex:drying rdf:type ex:DehumidificationMode ;
     ex:label "Drying" .
 ex:auto rdf:type ex:DehumidificationMode ;
@@ -239,9 +224,7 @@ ex:auto rdf:type ex:DehumidificationMode ;
 
 
 
-##################################
 ### USE CASE PROPERTIES
-##################################
 ex:hasConditioningFanSpeed rdf:type rdf:Property ;
     rdfs:domain ex:ConditioningUseCase ;
     rdfs:range ex:FanSpeed .
@@ -275,13 +258,15 @@ ex:hasHumidityMode rdf:type rdf:Property ;
     rdfs:domain ex:DehumidifyingUseCase ;
     rdfs:range ex:HumidityMode .
 
+ex:hasFanSpeed rdf:type rdf:Property ;
+    rdfs:domain ex:FanUseCase ;
+    rdfs:range ex:FanSpeed .
 
 
-##################################
+
 ### CONDITIONING USE CASES
-##################################
 # Temperature is much below normal (an edge case)
-[] a ex:ConditioningUseCase ;
+ex:temperatureIsMuchBelowNormalConditioningUseCase a ex:ConditioningUseCase ;
     ex:label "The temperature is much below normal" ;
     ex:hasTemperatureCategory ex:muchBelowNormal ;
     ex:hasConditioningFanSpeed ex:high ;
@@ -292,7 +277,17 @@ ex:hasHumidityMode rdf:type rdf:Property ;
     ] .
 
 # Temperature is below normal
-[] a ex:ConditioningUseCase ;
+ex:temperatureIsBelowNormalWithZeroDensityConditioningUseCase a ex:ConditioningUseCase ;
+    ex:label "The temperature is below normal with zero density" ;
+    ex:hasTemperatureCategory ex:belowNormal ;
+    ex:hasConditioningFanSpeed ex:low ;
+    ex:hasConditioningMode ex:heating ;
+    ex:hasDensityCategory ex:zeroDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
+ex:temperatureIsBelowNormalWithLowDensityConditioningUseCase a ex:ConditioningUseCase ;
     ex:label "The temperature is below normal with low density" ;
     ex:hasTemperatureCategory ex:belowNormal ;
     ex:hasConditioningFanSpeed ex:medium ;
@@ -302,7 +297,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         a ex:Conditioner ;
         ex:hasPower ex:on
     ] .
-[] a ex:ConditioningUseCase ;
+ex:temperatureIsBelowNormalWithMediumDensityConditioningUseCase a ex:ConditioningUseCase ;
     ex:label "The temperature is below normal with medium density" ;
     ex:hasTemperatureCategory ex:belowNormal ;
     ex:hasConditioningFanSpeed ex:auto ;
@@ -312,19 +307,39 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         a ex:Conditioner ;
         ex:hasPower ex:on
     ] .
-[] a ex:ConditioningUseCase ;
+ex:temperatureIsBelowNormalWithHighDensityConditioningUseCase a ex:ConditioningUseCase ;
     ex:label "The temperature is below normal with high density" ;
     ex:hasTemperatureCategory ex:belowNormal ;
-    ex:hasConditioningFanSpeed ex:low ;
+    ex:hasConditioningFanSpeed ex:auto ;
     ex:hasConditioningMode ex:heating ;
     ex:hasDensityCategory ex:highDensity ;
     ex:controls [
         a ex:Conditioner ;
         ex:hasPower ex:on
     ] .
+ex:temperatureIsBelowNormalWithExtraHighDensityConditioningUseCase a ex:ConditioningUseCase ;
+    ex:label "The temperature is below normal with extra high density" ;
+    ex:hasTemperatureCategory ex:belowNormal ;
+    ex:hasConditioningFanSpeed ex:low ;
+    ex:hasConditioningMode ex:heating ;
+    ex:hasDensityCategory ex:extraHighDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
 
 # Temperature is normal
-[] a ex:ConditioningUseCase ;
+ex:temperatureIsNormalWithZeroDensityConditioningUseCase a ex:ConditioningUseCase ;
+    ex:label "The temperature is normal with zero density" ;
+    ex:hasTemperatureCategory ex:normal ;
+    ex:hasConditioningFanSpeed ex:auto ;
+    ex:hasConditioningMode ex:auto ;
+    ex:hasDensityCategory ex:zeroDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:off
+    ] .
+ex:temperatureIsNormalWithLowDensityConditioningUseCase a ex:ConditioningUseCase ;
     ex:label "The temperature is normal with low density" ;
     ex:hasTemperatureCategory ex:normal ;
     ex:hasConditioningFanSpeed ex:auto ;
@@ -334,7 +349,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         a ex:Conditioner ;
         ex:hasPower ex:on
     ] .
-[] a ex:ConditioningUseCase ;
+ex:temperatureIsNormalWithMediumDensityConditioningUseCase a ex:ConditioningUseCase ;
     ex:label "The temperature is normal with medium density" ;
     ex:hasTemperatureCategory ex:normal ;
     ex:hasConditioningFanSpeed ex:auto ;
@@ -344,7 +359,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         a ex:Conditioner ;
         ex:hasPower ex:on
     ] .
-[] a ex:ConditioningUseCase ;
+ex:temperatureIsNormalWithHighDensityConditioningUseCase a ex:ConditioningUseCase ;
     ex:label "The temperature is normal with high density" ;
     ex:hasTemperatureCategory ex:normal ;
     ex:hasConditioningFanSpeed ex:high ;
@@ -354,9 +369,29 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         a ex:Conditioner ;
         ex:hasPower ex:on
     ] .
+ex:temperatureIsNormalWithExtraHighDensityConditioningUseCase a ex:ConditioningUseCase ;
+    ex:label "The temperature is normal with extra high density" ;
+    ex:hasTemperatureCategory ex:normal ;
+    ex:hasConditioningFanSpeed ex:medium ;
+    ex:hasConditioningMode ex:cooling ;
+    ex:hasDensityCategory ex:extraHighDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
 
 # Temperature is above normal
-[] a ex:ConditioningUseCase ;
+ex:temperatureIsAboveNormalWithZeroDensityConditioningUseCase a ex:ConditioningUseCase ;
+    ex:label "The temperature is above normal with zero density" ;
+    ex:hasTemperatureCategory ex:aboveNormal ;
+    ex:hasConditioningFanSpeed ex:medium ;
+    ex:hasConditioningMode ex:cooling ;
+    ex:hasDensityCategory ex:zeroDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
+ex:temperatureIsAboveNormalWithLowDensityConditioningUseCase a ex:ConditioningUseCase ;
     ex:label "The temperature is above normal with low density" ;
     ex:hasTemperatureCategory ex:aboveNormal ;
     ex:hasConditioningFanSpeed ex:medium ;
@@ -366,7 +401,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         a ex:Conditioner ;
         ex:hasPower ex:on
     ] .
-[] a ex:ConditioningUseCase ;
+ex:temperatureIsAboveNormalWithMediumDensityConditioningUseCase a ex:ConditioningUseCase ;
     ex:label "The temperature is above normal with medium density" ;
     ex:hasTemperatureCategory ex:aboveNormal ;
     ex:hasConditioningFanSpeed ex:auto ;
@@ -376,8 +411,18 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         a ex:Conditioner ;
         ex:hasPower ex:on
     ] .
-[] a ex:ConditioningUseCase ;
+ex:temperatureIsAboveNormalWithHighDensityConditioningUseCase a ex:ConditioningUseCase ;
     ex:label "The temperature is above normal with high density" ;
+    ex:hasTemperatureCategory ex:aboveNormal ;
+    ex:hasConditioningFanSpeed ex:high ;
+    ex:hasConditioningMode ex:cooling ;
+    ex:hasDensityCategory ex:highDensity ;
+    ex:controls [
+        a ex:Conditioner ;
+        ex:hasPower ex:on
+    ] .
+ex:temperatureIsAboveNormalWithExtraHighDensityConditioningUseCase a ex:ConditioningUseCase ;
+    ex:label "The temperature is above normal with extra high density" ;
     ex:hasTemperatureCategory ex:aboveNormal ;
     ex:hasConditioningFanSpeed ex:high ;
     ex:hasConditioningMode ex:cooling ;
@@ -388,7 +433,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
     ] .
 
 # Temperature is much above normal (an edge case)
-[] a ex:ConditioningUseCase ;
+ex:temperatureIsMuchAboveNormalConditioningUseCase a ex:ConditioningUseCase ;
     ex:label "The temperature is much above normal" ;
     ex:hasTemperatureCategory ex:muchAboveNormal ;
     ex:hasConditioningFanSpeed ex:high ;
@@ -400,10 +445,8 @@ ex:hasHumidityMode rdf:type rdf:Property ;
 
 
 
-##################################
 ### HUMIDITY USE CASES
-##################################
-[] a ex:HumidifyingUseCase ;
+ex:humidityIsMuchBelowNormalHumidifyingUseCase a ex:HumidifyingUseCase ;
     ex:label "The humidity is much below normal" ;
     ex:hasHumidityCategory ex:muchBelowNormal ;
     ex:hasHumidifyingFanSpeed ex:high ;
@@ -413,7 +456,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         ex:hasPower ex:on
     ] .
 
-[] a ex:HumidifyingUseCase ;
+ex:humidityIsBelowNormalHumidifyingUseCase a ex:HumidifyingUseCase ;
     ex:label "The humidity is below normal" ;
     ex:hasHumidityCategory ex:belowNormal ;
     ex:hasHumidifyingFanSpeed ex:medium ;
@@ -423,7 +466,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         ex:hasPower ex:on
     ] .
 
-[] a ex:HumidifyingUseCase ;
+ex:humidityIsNormalHumidifyingUseCase a ex:HumidifyingUseCase ;
     ex:label "The humidity is normal" ;
     ex:hasHumidityCategory ex:normal ;
     ex:hasHumidifyingFanSpeed ex:auto ;
@@ -433,7 +476,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         ex:hasPower ex:on
     ] .
 
-[] a ex:HumidifyingUseCase ;
+ex:humidityIsAboveNormalHumidifyingUseCase a ex:HumidifyingUseCase ;
     ex:label "The humidity is above normal" ;
     ex:hasHumidityCategory ex:aboveNormal ;
     ex:controls [
@@ -441,7 +484,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         ex:hasPower ex:off
     ] .
 
-[] a ex:HumidifyingUseCase ;
+ex:humidityIsMuchAboveNormalHumidifyingUseCase a ex:HumidifyingUseCase ;
     ex:label "The humidity is much above normal" ;
     ex:hasHumidityCategory ex:muchAboveNormal ;
     ex:controls [
@@ -451,10 +494,8 @@ ex:hasHumidityMode rdf:type rdf:Property ;
 
 
 
-##################################
 ### DEHUMIDIFICATION USE CASES
-##################################
-[] a ex:DehumidifyingUseCase ;
+ex:humidityIsMuchBelowNormalDehumidifyingUseCase a ex:DehumidifyingUseCase ;
     ex:label "The humidity is much below normal" ;
     ex:hasHumidityCategory ex:muchBelowNormal ;
     ex:controls [
@@ -462,7 +503,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         ex:hasPower ex:off
     ] .
 
-[] a ex:DehumidifyingUseCase ;
+ex:humidityIsBelowNormalDehumidifyingUseCase a ex:DehumidifyingUseCase ;
     ex:label "The humidity is below normal" ;
     ex:hasHumidityCategory ex:belowNormal ;
     ex:controls [
@@ -470,7 +511,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         ex:hasPower ex:off
     ] .
 
-[] a ex:DehumidifyingUseCase ;
+ex:humidityIsNormalDehumidifyingUseCase a ex:DehumidifyingUseCase ;
     ex:label "The humidity is normal" ;
     ex:hasHumidityCategory ex:normal ;
     ex:controls [
@@ -478,7 +519,7 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         ex:hasPower ex:off
     ] .
 
-[] a ex:DehumidifyingUseCase ;
+ex:humidityIsAboveNormalDehumidifyingUseCase a ex:DehumidifyingUseCase ;
     ex:label "The humidity is above normal" ;
     ex:hasHumidityCategory ex:aboveNormal ;
     ex:hasDehumidificationFanSpeed ex:medium ;
@@ -488,12 +529,51 @@ ex:hasHumidityMode rdf:type rdf:Property ;
         ex:hasPower ex:on
     ] .
 
-[] a ex:DehumidifyingUseCase ;
+ex:humidityIsMuchAboveNormalDehumidifyingUseCase a ex:DehumidifyingUseCase ;
     ex:label "The humidity is much above normal" ;
     ex:hasHumidityCategory ex:muchAboveNormal ;
     ex:hasDehumidificationFanSpeed ex:medium ;
     ex:hasDehumidificationMode ex:drying ;
     ex:controls [
         a ex:Dehumidifier ;
+        ex:hasPower ex:on
+    ] .
+
+
+
+### FAN USE CASES
+ex:densityIsLowFanUseCase a ex:FanUseCase ;
+    ex:label "The density is low" ;
+    ex:hasFanSpeed ex:auto ;
+    ex:hasDensityCategory ex:lowDensity ;
+    ex:controls [
+        a ex:Fan ;
+        ex:hasPower ex:on
+    ] .
+
+ex:densityIsMediumFanUseCase a ex:FanUseCase ;
+    ex:label "The density is medium" ;
+    ex:hasFanSpeed ex:medium ;
+    ex:hasDensityCategory ex:mediumDensity ;
+    ex:controls [
+        a ex:Fan ;
+        ex:hasPower ex:on
+    ] .
+
+ex:densityIsHighFanUseCase a ex:FanUseCase ;
+    ex:label "The density is high" ;
+    ex:hasFanSpeed ex:high ;
+    ex:hasDensityCategory ex:highDensity ;
+    ex:controls [
+        a ex:Fan ;
+        ex:hasPower ex:on
+    ] .
+
+ex:densityIsExtraHighFanUseCase a ex:FanUseCase ;
+    ex:label "The density is extra high" ;
+    ex:hasFanSpeed ex:high ;
+    ex:hasDensityCategory ex:extraHighDensity ;
+    ex:controls [
+        a ex:Fan ;
         ex:hasPower ex:on
     ] .

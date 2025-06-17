@@ -93,7 +93,7 @@ class UseCaseRepository(KnowledgeRepository):
         self.density_category_repository = density_category_repository
         self.humidity_category_repository = humidity_category_repository
 
-    def get_by_temperature(
+    def get_conditioning_use_cases(
         self,
         current_temperature: float,
         min_target_temperature: float,
@@ -106,41 +106,60 @@ class UseCaseRepository(KnowledgeRepository):
 
         rows = self.storage.get(
             """
+            PREFIX ex: <http://example.org/building#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            SELECT ?fan_speed ?mode ?device_power
+            WHERE {
+                ?use_case a ex:ConditioningUseCase ;
+                         ex:hasTemperatureCategory ?temperature_category ;
+                         ex:hasDensityCategory ?density_category ;
+                         ex:label ?label ;
+                         ex:hasConditioningFanSpeed ?fan_speed ;
+                         ex:hasConditioningMode ?mode ;
+                         ex:controls ?device .
+                ?device ex:hasPower ?device_power .
+            }
+            """,
+            {
+               "temperature_category": temperature_category,
+               "density_category": density_category,
+            }
+        )
+
+        if not rows:
+            # looking for edge cases
+            rows = self.storage.get(
+                """
                 PREFIX ex: <http://example.org/building#>
                 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
                 SELECT ?fan_speed ?mode ?device_power
                 WHERE {
                     ?use_case a ex:ConditioningUseCase ;
-                              ex:hasTemperatureCategory ?temperature_category ;
-                              ex:hasDensityCategory ?density_category ;
-                              ex:label ?label ;
-                              ex:hasConditioningFanSpeed ?fan_speed ;
-                              ex:hasConditioningMode ?mode ;
-                              ex:controls ?device .
-
+                             ex:hasTemperatureCategory ?temperature_category ;
+                             ex:label ?label ;
+                             ex:hasConditioningFanSpeed ?fan_speed ;
+                             ex:hasConditioningMode ?mode ;
+                             ex:controls ?device .
                     ?device ex:hasPower ?device_power .
                 }
-            """,
-            {
-                "temperature_category": temperature_category,
-                "density_category": density_category,
-            }
-        )
+                """,
+                {
+                   "temperature_category": temperature_category,
+                }
+            )
 
         result = []
         for row in rows:
-            (fan_speed, mode, device_power) = row
-
-            tuple = (
+            fan_speed, mode, device_power = row
+            result.append((
                 FanSpeed(fan_speed.replace(self.EX_PREFIX, '')),
                 ConditioningMode(mode.replace(self.EX_PREFIX, '')),
                 DevicePower(device_power.replace(self.EX_PREFIX, ''))
-            )
-            result.append(tuple)
+            ))
 
         return result
 
-    def get_by_humidity(
+    def get_humidity_use_cases(
         self,
         current_humidity: float,
         min_target_humidity: float,
@@ -204,6 +223,42 @@ class UseCaseRepository(KnowledgeRepository):
             result.append(tuple)
 
         return result
+
+    def get_fan_use_case_by_destiny(self, density: float):
+        density_category = self.density_category_repository.get_by_density(density)
+
+        rows = self.storage.get(
+            """
+                PREFIX ex: <http://example.org/building#>
+                PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+                SELECT ?fan_speed ?device_power
+                WHERE {
+                    ?use_case a ex:FanUseCase ;
+                              ex:hasDensityCategory ?density_category ;
+                              ex:hasFanSpeed ?fan_speed ;
+                              ex:controls ?device .
+
+                    ?device ex:hasPower ?device_power .
+                }
+            """,
+            {
+                "density_category": density_category,
+            }
+        )
+
+
+        result = []
+        for row in rows:
+            fan_speed, device_power = row
+            tuple =(
+                FanSpeed(fan_speed.replace(self.EX_PREFIX, '')),
+                DevicePower(device_power.replace(self.EX_PREFIX, ''))
+            )
+
+            result.append(tuple)
+
+        return result
+
 
     def _get_delta(self, current: float, min: float, max: float) -> float:
         if current < min:

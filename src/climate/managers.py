@@ -14,6 +14,8 @@ from climate.wrappers import (
     DummyHumidifier,
     Dehumidifier,
     DummyDehumidifier,
+    Fan,
+    DummyFan,
 )
 from climate.enums import ConditioningMode, FanSpeed, DevicePower, HumidityMode
 
@@ -58,4 +60,11 @@ class DehumidifierDeviceManager:
             fan_speed = FanSpeed.MEDIUM if dehumidifier.current_fan_speed is None else dehumidifier.current_fan_speed,
             mode = HumidityMode.AUTO if dehumidifier.current_mode is None else dehumidifier.current_mode,
             power = dehumidifier.power
+        )
+
+class FanDeviceManager:
+    def get_driver(self, fan: Device) -> Fan:
+        return DummyFan(
+            speed = FanSpeed.MEDIUM if fan.current_fan_speed is None else fan.current_fan_speed,
+            power = fan.power
         )

@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                 ("host", models.CharField(max_length=15)),
                 ("port", models.IntegerField()),
                 ("is_automatic", models.BooleanField(default=True)),
-                ("current_destiny", models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)),
+                ("current_density", models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)),
                 ("current_temperature", models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)),
                 ("target_temperature", models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)),
                 ("current_humidity", models.DecimalField(null = True, default=None, max_digits = 5, decimal_places = 2)),
