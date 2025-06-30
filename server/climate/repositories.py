@@ -1,4 +1,4 @@
-from climate.models import Sector
+from climate.models import Sector, Device, HistoricalData
 from climate.enums import (
     FanSpeed,
     ConditioningMode,
@@ -224,7 +224,7 @@ class UseCaseRepository(KnowledgeRepository):
 
         return result
 
-    def get_fan_use_case_by_destiny(self, density: float):
+    def get_fan_use_case_by_density(self, density: float):
         density_category = self.density_category_repository.get_by_density(density)
 
         rows = self.storage.get(
@@ -335,3 +335,7 @@ class SectorRepository:
 class DeviceRepository:
     def get_for_sector(self, sector: Sector):
         return sector.device_set.all()
+
+class HistoricalDataRepository:
+    def get_last_for_device(self, device: Device):
+        return HistoricalData.objects.filter(device=device).order_by('-created_at').first()

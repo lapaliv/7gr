@@ -8,6 +8,7 @@ from climate.repositories import (
     SectorRepository,
     DeviceRepository,
     HumidityCategoryRepository,
+    HistoricalDataRepository,
 )
 from climate.managers import (
     ConditionerDeviceManager,
@@ -19,6 +20,7 @@ from climate.managers import (
     FanDeviceManager,
 )
 from climate.wrappers import ComputerVision, DummyComputerVision
+from climate.services import SectorService
 from pathlib import Path
 
 class Container(containers.DeclarativeContainer):
@@ -51,6 +53,7 @@ class Container(containers.DeclarativeContainer):
     )
     sector_repository = providers.Singleton(SectorRepository)
     device_repository = providers.Singleton(DeviceRepository)
+    historical_data_repository = providers.Singleton(HistoricalDataRepository)
 
     # Managers
     conditioner_device_manager = providers.Singleton(ConditionerDeviceManager)
@@ -64,3 +67,17 @@ class Container(containers.DeclarativeContainer):
     # Device drivers
     dummy_computer_vision = providers.Singleton(DummyComputerVision, 30.0)
     computer_vision = dummy_computer_vision
+
+    # Services
+    sector_service = providers.Singleton(
+        SectorService,
+        device_repository = device_repository(),
+        conditioner_device_manager = conditioner_device_manager(),
+        camera_device_manager = camera_device_manager(),
+        computer_vision = computer_vision(),
+        humidity_sensor_device_manager = humidity_sensor_device_manager(),
+        humidifier_device_manager = humidifier_device_manager(),
+        dehumidifier_device_manager = dehumidifier_device_manager(),
+        temperature_sensor_device_manager = temperature_sensor_device_manager(),
+        historical_data_repository = historical_data_repository(),
+    )

@@ -145,20 +145,20 @@ ex:spring rdf:type ex:Season ;
 
 ### DENSITY CATEGORIES
 ex:zeroDensity rdf:type ex:DensityCategory ;
-    ex:hasMinDensity "0.0"^^xsd:float ;
-    ex:hasMaxDensity "0.01"^^xsd:float .
+    ex:hasMinDensity "0"^^xsd:integer ;
+    ex:hasMaxDensity "0"^^xsd:integer .
 ex:lowDensity rdf:type ex:DensityCategory ;
-    ex:hasMinDensity "0.01"^^xsd:float ;
-    ex:hasMaxDensity "0.21"^^xsd:float .
+    ex:hasMinDensity "1"^^xsd:integer ;
+    ex:hasMaxDensity "5"^^xsd:integer .
 ex:mediumDensity rdf:type ex:DensityCategory ;
-    ex:hasMinDensity "0.21"^^xsd:float ;
-    ex:hasMaxDensity "0.51"^^xsd:float .
+    ex:hasMinDensity "6"^^xsd:integer ;
+    ex:hasMaxDensity "15"^^xsd:integer .
 ex:highDensity rdf:type ex:DensityCategory ;
-    ex:hasMinDensity "0.51"^^xsd:float ;
-    ex:hasMaxDensity "0.7"^^xsd:float .
+    ex:hasMinDensity "16"^^xsd:integer ;
+    ex:hasMaxDensity "30"^^xsd:integer .
 ex:extraHighDensity rdf:type ex:DensityCategory ;
-    ex:hasMinDensity "0.71"^^xsd:float ;
-    ex:hasMaxDensity "1000.0"^^xsd:float .
+    ex:hasMinDensity "31"^^xsd:integer ;
+    ex:hasMaxDensity "1000"^^xsd:integer .
 
 
 
