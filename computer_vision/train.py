@@ -1,7 +1,4 @@
 # pip install bitsandbytes accelerate xformers peft trl triton cut_cross_entropy unsloth_zoo sentencepiece protobuf huggingface_hub hf_transfer wandb python-dotenv unsloth kagglehub
-# pip install unsloth
-
-
 from unsloth import FastVisionModel, is_bf16_supported
 from unsloth.trainer import UnslothVisionDataCollator
 import os
