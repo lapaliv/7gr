@@ -1,4 +1,6 @@
 # pip install bitsandbytes accelerate xformers peft trl triton cut_cross_entropy unsloth_zoo sentencepiece protobuf huggingface_hub hf_transfer wandb python-dotenv unsloth kagglehub
+# pip install unsloth
+
 
 from unsloth import FastVisionModel, is_bf16_supported
 from unsloth.trainer import UnslothVisionDataCollator
@@ -9,6 +11,7 @@ load_dotenv()
 
 WANDB_TOKEN = os.getenv("WANDB_TOKEN")
 HF_TOKEN = os.getenv("HF_TOKEN")
+MODEL_NAME = os.getenv("MODEL_NAME")
 VERSION = os.getenv("VERSION")
 DIR = f"outputs/{VERSION}"
 
@@ -26,24 +29,6 @@ import wandb
 from transformers import EarlyStoppingCallback
 
 wandb.login(key=WANDB_TOKEN)
-
-# 4bit pre quantized models we support for 4x faster downloading + no OOMs.
-# fourbit_models = [
-#     "unsloth/Llama-3.2-11B-Vision-Instruct-bnb-4bit", # Llama 3.2 vision support
-#     "unsloth/Llama-3.2-11B-Vision-bnb-4bit",
-#     "unsloth/Llama-3.2-90B-Vision-Instruct-bnb-4bit", # Can fit in a 80GB card!
-#     "unsloth/Llama-3.2-90B-Vision-bnb-4bit",
-#
-#     "unsloth/Pixtral-12B-2409-bnb-4bit",              # Pixtral fits in 16GB!
-#     "unsloth/Pixtral-12B-Base-2409-bnb-4bit",         # Pixtral base model
-#
-#     "unsloth/Qwen2-VL-2B-Instruct-bnb-4bit",          # Qwen2 VL support
-#     "unsloth/Qwen2-VL-7B-Instruct-bnb-4bit",
-#     "unsloth/Qwen2-VL-72B-Instruct-bnb-4bit",
-#
-#     "unsloth/llava-v1.6-mistral-7b-hf-bnb-4bit",      # Any Llava variant works!
-#     "unsloth/llava-1.5-7b-hf-bnb-4bit",
-# ] # More models at https://huggingface.co/unsloth
 
 model, tokenizer = FastVisionModel.from_pretrained(
     "unsloth/Llama-3.2-11B-Vision-Instruct-bnb-4bit",
@@ -155,10 +140,5 @@ trainer = SFTTrainer(
 
 trainer_stats = trainer.train()
 
-# model.save_pretrained("lora_model")
-# tokenizer.save_pretrained("lora_model")
-# model.push_to_hub("lapaliv/7gr-model", token = HF_TOKEN)
-# tokenizer.push_to_hub("lapaliv/7gr-tokenizer", token = HF_TOKEN)
-
 model.save_pretrained_merged(DIR, tokenizer, "merged_16bit")
-model.push_to_hub_merged(f"lapaliv/7gr-{VERSION}", tokenizer, "merged_16bit", token = HF_TOKEN)
+model.push_to_hub_merged(f"{MODEL_NAME}-{VERSION}", tokenizer, "merged_16bit", token = HF_TOKEN)
