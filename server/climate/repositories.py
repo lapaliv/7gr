@@ -76,6 +76,7 @@ class DensityCategoryRepository(KnowledgeRepository):
             {"density": density}
         )
         if not result:
+            print(result, density)
             raise LookupError("No matching density category found")
 
         return result[0][0]

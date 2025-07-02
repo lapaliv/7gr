@@ -76,7 +76,7 @@ class Command(BaseCommand):
         use_cases = self.use_case_repository.get_conditioning_use_cases(current_temperature, min_target, max_target, density)
 
         for device in devices:
-            if not device.is_automatic:
+            if not device.is_automatic or device.power == DevicePower.OFF.value:
                 continue
 
             if device.type != DeviceType.CONDITIONER.value:
@@ -126,7 +126,7 @@ class Command(BaseCommand):
         use_cases = self.use_case_repository.get_fan_use_case_by_density(density)
 
         for device in devices:
-            if not device.is_automatic:
+            if not device.is_automatic or device.power == DevicePower.OFF.value:
                 continue
 
             if device.type != DeviceType.FAN.value:
@@ -169,7 +169,7 @@ class Command(BaseCommand):
         target_humidity = (min_target + max_target) / 2
 
         for device in devices:
-            if not device.is_automatic:
+            if not device.is_automatic or device.power == DevicePower.OFF.value:
                 continue
 
             if device.type == DeviceType.HUMIDIFIER.value:

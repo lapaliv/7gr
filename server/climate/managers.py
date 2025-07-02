@@ -1,3 +1,4 @@
+import random
 from climate.models import Device
 from climate.wrappers import (
     TemperatureSensor,
@@ -22,13 +23,13 @@ from climate.enums import ConditioningMode, FanSpeed, DevicePower, HumidityMode
 class TemperatureSensorDeviceManager:
     def get_driver(self, sensor: Device) -> TemperatureSensor:
         return DummyTemperatureSensor(
-            temperature = 20.0 if sensor.current_temperature is None else float(sensor.current_temperature)
+            temperature = random.randint(18, 25) if sensor.current_temperature is None else float(sensor.current_temperature)
         )
 
 class ConditionerDeviceManager:
     def get_driver(self, conditioner: Device) -> Conditioner:
         return DummyConditioner(
-            temperature = 25.0 if conditioner.current_temperature is None else float(conditioner.current_temperature),
+            temperature = random.randint(18, 25) if conditioner.current_temperature is None else float(conditioner.current_temperature),
             fan_speed = FanSpeed.MEDIUM if conditioner.current_fan_speed is None else conditioner.current_fan_speed,
             mode = HumidityMode.AUTO if conditioner.current_mode is None else conditioner.current_mode,
             power = conditioner.power
@@ -41,7 +42,7 @@ class CameraDeviceManager:
 class HumiditySensorDeviceManager:
     def get_driver(self, sensor: Device) -> HumiditySensor:
         return DummyHumiditySensor(
-            humidity = 50.0 if sensor.current_humidity is None else float(sensor.current_humidity),
+            humidity = random.randint(30, 70) if sensor.current_humidity is None else float(sensor.current_humidity),
         )
 
 class HumidifierDeviceManager:

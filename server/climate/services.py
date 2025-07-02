@@ -88,7 +88,12 @@ class SectorService:
                 values.append(temperature)
 
                 device.current_temperature = temperature
-                device.current_fan_speed = None
+
+                if device.type == DeviceType.CONDITIONER.value:
+                    device.current_fan_speed = driver.get_fan_speed()
+                    device.current_mode = driver.get_mode()
+                elif device.type == DeviceType.TEMPERATURE_SENSOR.value:
+                    device.current_fan_speed = None
                 device.current_mode = None
 
                 self._create_historical_data(device)
@@ -126,8 +131,13 @@ class SectorService:
                 values.append(humidity)
 
                 device.current_humidity = humidity
-                device.current_fan_speed = None
-                device.current_mode = None
+
+                if device.type == DeviceType.HUMIDITY_SENSOR.value:
+                    device.current_fan_speed = None
+                    device.current_mode = None
+                elif device.type == DeviceType.HUMIDIFIER.value or device.type == DeviceType.DEHUMIDIFIER.value:
+                    device.current_fan_speed = driver.get_fan_speed()
+                    device.current_mode = driver.get_mode()
 
                 self._create_historical_data(device)
             except Exception as e:

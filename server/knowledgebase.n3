@@ -148,16 +148,16 @@ ex:zeroDensity rdf:type ex:DensityCategory ;
     ex:hasMinDensity "0"^^xsd:integer ;
     ex:hasMaxDensity "0"^^xsd:integer .
 ex:lowDensity rdf:type ex:DensityCategory ;
-    ex:hasMinDensity "1"^^xsd:integer ;
+    ex:hasMinDensity "0"^^xsd:integer ;
     ex:hasMaxDensity "5"^^xsd:integer .
 ex:mediumDensity rdf:type ex:DensityCategory ;
-    ex:hasMinDensity "6"^^xsd:integer ;
+    ex:hasMinDensity "5"^^xsd:integer ;
     ex:hasMaxDensity "15"^^xsd:integer .
 ex:highDensity rdf:type ex:DensityCategory ;
-    ex:hasMinDensity "16"^^xsd:integer ;
+    ex:hasMinDensity "15"^^xsd:integer ;
     ex:hasMaxDensity "30"^^xsd:integer .
 ex:extraHighDensity rdf:type ex:DensityCategory ;
-    ex:hasMinDensity "31"^^xsd:integer ;
+    ex:hasMinDensity "30"^^xsd:integer ;
     ex:hasMaxDensity "1000"^^xsd:integer .
 
 
