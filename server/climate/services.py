@@ -119,7 +119,7 @@ class SectorService:
             if device.type == DeviceType.HUMIDITY_SENSOR.value:
                 driver = self.humidity_sensor_device_manager.get_driver(device)
             elif device.type == DeviceType.HUMIDIFIER.value:
-                driver = self.humidity_sensor_device_manager.get_driver(device)
+                driver = self.humidifier_device_manager.get_driver(device)
             elif device.type == DeviceType.DEHUMIDIFIER.value:
                 driver = self.dehumidifier_device_manager.get_driver(device)
 
