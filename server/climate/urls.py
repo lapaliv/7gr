@@ -17,10 +17,11 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
+from django.shortcuts import redirect
 from climate.admin_views import digital_twin
 
 urlpatterns = [
-#     path("climate/", include("climate.urls")),
+    path('', lambda request: redirect('/admin', permanent=True)),
     path("admin/digital-twin/", digital_twin, name="digital_twin"),
     path("admin/", admin.site.urls),
 ]
